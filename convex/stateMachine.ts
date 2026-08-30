@@ -451,6 +451,96 @@ export async function transitionProject(
   });
 }
 
+// ---------------------------------------------------------------------------
+// adminForceProjectState
+// ---------------------------------------------------------------------------
+
+export interface AdminResumeMetadata {
+  correlationId: string;
+  stage: string;
+  reason?: string;
+}
+
+/**
+ * Admin-only override used exclusively by the Admin app's "Resume from
+ * step" / "Retry" controls (convex/adminRecovery.ts) — never called from
+ * automated pipeline code. Unlike `transitionProject`, this intentionally
+ * does NOT enforce the TRANSITIONS adjacency graph: an operator may need to
+ * resume a project from any earlier checkpoint (e.g. re-run the voice call
+ * after a downstream build failure), which the strict forward-only state
+ * machine deliberately disallows on its own.
+ *
+ * Every call is still fully audited (an activityEvents row with eventType
+ * "ADMIN_OVERRIDE") and clears any stale failure metadata on the project +
+ * workflow run so the resumed stage doesn't inherit a previous attempt's
+ * error fields.
+ */
+export async function adminForceProjectState(
+  ctx: MutationCtx,
+  projectId: Id<"projects">,
+  toState: ProjectState,
+  metadata: AdminResumeMetadata,
+): Promise<{ fromState: ProjectState | undefined; workflowRunId: Id<"workflowRuns"> }> {
+  if (!ALL_STATES_SET.has(toState)) {
+    throw new Error(`adminForceProjectState: unknown state "${String(toState)}"`);
+  }
+  if (!metadata.correlationId || !metadata.stage) {
+    throw new Error("adminForceProjectState: metadata.correlationId and metadata.stage are required");
+  }
+
+  const project = await ctx.db.get(projectId);
+  if (!project) {
+    throw new Error(`adminForceProjectState: project ${projectId} not found`);
+  }
+
+  const workflowRun = await findWorkflowRun(ctx, projectId, undefined);
+  if (!workflowRun) {
+    throw new Error(`adminForceProjectState: no workflowRun found for project ${projectId}`);
+  }
+  const workflowRunId = workflowRun._id;
+
+  const fromState = project.state;
+  const now = Date.now();
+  const clearedFailureFields = {
+    failedStage: undefined,
+    errorCode: undefined,
+    retryable: undefined,
+    retryCount: undefined,
+    maxRetries: undefined,
+    provider: undefined,
+    providerRequestId: undefined,
+  };
+
+  await ctx.db.patch(projectId, {
+    state: toState,
+    updatedAt: now,
+    ...clearedFailureFields,
+  });
+
+  await ctx.db.patch(workflowRunId, {
+    state: toState,
+    updatedAt: now,
+    ...clearedFailureFields,
+  });
+
+  const extra: Record<string, unknown> = {};
+  if (metadata.reason) extra.reason = metadata.reason;
+
+  await ctx.db.insert("activityEvents", {
+    projectId,
+    workflowRunId,
+    eventType: "ADMIN_OVERRIDE",
+    fromState,
+    toState,
+    stage: metadata.stage,
+    correlationId: metadata.correlationId,
+    createdAt: now,
+    ...(Object.keys(extra).length > 0 ? { metadata: extra } : {}),
+  });
+
+  return { fromState, workflowRunId };
+}
+
 async function findWorkflowRun(
   ctx: MutationCtx,
   projectId: Id<"projects">,

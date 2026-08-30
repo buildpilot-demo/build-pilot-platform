@@ -1,0 +1,55 @@
+[      97ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5174/node_modules/.vite/deps/react-dom_client.js?v=68c20d53:14335
+[     142ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:5174/node_modules/.vite/deps/react-router-dom.js?v=68c20d53:3614
+[     143ms] [WARNING] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath. @ http://localhost:5174/node_modules/.vite/deps/react-router-dom.js?v=68c20d53:3614
+[  302118ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_RESET @ http://localhost:5174/src/App.tsx?t=1788083479043:0
+[  302118ms] [ERROR] [vite] Failed to reload /src/App.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302119ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/components/ActivityTimeline.tsx?t=1788083479044:0
+[  302119ms] [ERROR] [vite] Failed to reload /src/components/ActivityTimeline.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302119ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/components/AppShell.tsx?t=1788083479045:0
+[  302119ms] [ERROR] [vite] Failed to reload /src/components/AppShell.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302120ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/components/BuildProgressPanel.tsx?t=1788083479046:0
+[  302120ms] [ERROR] [vite] Failed to reload /src/components/BuildProgressPanel.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302120ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/components/DiscoveryCallPanel.tsx?t=1788083479047:0
+[  302120ms] [ERROR] [vite] Failed to reload /src/components/DiscoveryCallPanel.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302121ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/components/ErrorBoundary.tsx?t=1788083479049:0
+[  302121ms] [ERROR] [vite] Failed to reload /src/components/ErrorBoundary.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302122ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/components/Icons.tsx?t=1788083479050:0
+[  302122ms] [ERROR] [vite] Failed to reload /src/components/Icons.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302122ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/components/LiveActivityFeed.tsx?t=1788083479052:0
+[  302122ms] [ERROR] [vite] Failed to reload /src/components/LiveActivityFeed.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302122ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/components/Loading.tsx?t=1788083479053:0
+[  302122ms] [ERROR] [vite] Failed to reload /src/components/Loading.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302123ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/components/PipelineStepper.tsx?t=1788083479054:0
+[  302123ms] [ERROR] [vite] Failed to reload /src/components/PipelineStepper.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302123ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/components/ProjectTable.tsx?t=1788083479055:0
+[  302123ms] [ERROR] [vite] Failed to reload /src/components/ProjectTable.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302123ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/components/RecoveryActionButton.tsx?t=1788083479056:0
+[  302124ms] [ERROR] [vite] Failed to reload /src/components/RecoveryActionButton.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302124ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/components/StagePanelStack.tsx?t=1788083479057:0
+[  302124ms] [ERROR] [vite] Failed to reload /src/components/StagePanelStack.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302124ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/components/StatusBadge.tsx?t=1788083479058:0
+[  302124ms] [ERROR] [vite] Failed to reload /src/components/StatusBadge.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302125ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/components/TranscriptView.tsx?t=1788083479059:0
+[  302125ms] [ERROR] [vite] Failed to reload /src/components/TranscriptView.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302125ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/pages/ProjectPage.tsx?t=1788083479070:0
+[  302125ms] [ERROR] [vite] Failed to reload /src/pages/ProjectPage.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302125ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/pages/HealthPage.tsx?t=1788083479070:0
+[  302125ms] [ERROR] [vite] Failed to reload /src/pages/HealthPage.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/pages/SearchPage.tsx?t=1788083479070:0
+[  302126ms] [ERROR] [vite] Failed to reload /src/pages/SearchPage.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302126ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/pages/BusinessPage.tsx?t=1788083479084:0
+[  302126ms] [ERROR] [vite] Failed to reload /src/pages/BusinessPage.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/pages/DashboardPage.tsx?t=1788083479085:0
+[  302127ms] [ERROR] [vite] Failed to reload /src/pages/DashboardPage.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/pages/HealthPage.tsx?t=1788083479086:0
+[  302127ms] [ERROR] [vite] Failed to reload /src/pages/HealthPage.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302127ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/pages/NotFoundPage.tsx?t=1788083479087:0
+[  302127ms] [ERROR] [vite] Failed to reload /src/pages/NotFoundPage.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302128ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/pages/ProjectPage.tsx?t=1788083479088:0
+[  302128ms] [ERROR] [vite] Failed to reload /src/pages/ProjectPage.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302128ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/pages/SearchPage.tsx?t=1788083479089:0
+[  302128ms] [ERROR] [vite] Failed to reload /src/pages/SearchPage.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302128ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:5174/src/styles.css?t=1788083479090:0
+[  302128ms] [ERROR] [vite] Failed to reload /src/styles.css. This could be due to syntax errors or importing non-existent modules. (see errors above) @ http://localhost:5174/@vite/client:935
+[  302128ms] [LOG] [vite] server connection lost. Polling for restart... @ http://localhost:5174/@vite/client:1002
+[  302218ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ chrome-error://chromewebdata/:0
