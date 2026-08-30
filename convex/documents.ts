@@ -180,6 +180,7 @@ async function buildSiteConfig(ctx: ExternalCallContext, context: DocumentContex
       heading: content.productsSection.heading,
       body: content.productsSection.body,
       scrollHeightVh: content.productsScrollHeightVh,
+      imageAspectRatio: content.productsSection.imageAspectRatio,
       items: content.productsSection.items,
     },
   };

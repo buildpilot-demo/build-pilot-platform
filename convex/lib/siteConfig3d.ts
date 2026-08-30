@@ -140,6 +140,13 @@ const HERO_TECHNICAL_DEFAULTS = {
 
 const PRODUCTS_SCROLL_HEIGHT_VH = 500;
 
+// Product/service panel images render as fixed-ratio square cards rather
+// than full-height editorial imagery — deterministic (not LLM-authored) so
+// every generated site gets a consistent, predictable card layout for its
+// stock/product photography regardless of each source image's native
+// dimensions.
+const PRODUCT_IMAGE_ASPECT_RATIO = "1:1";
+
 // Used only for the "plain" (no matching asset collection) variant, where
 // there's no collection-specific defaultPalette to fall back to.
 const NEUTRAL_DEFAULT_PALETTE = {
@@ -341,6 +348,7 @@ export type CinematicSiteConfigContent = {
     eyebrow: string;
     heading: string;
     body: string;
+    imageAspectRatio: string;
     items: Array<{ category: string; name: string; description: string; image: string }>;
   };
   enquirySection: {
@@ -556,6 +564,7 @@ export async function buildSiteConfig3dContent(
       eyebrow: nonEmptyString(productsRaw?.eyebrow, "What we offer"),
       heading: nonEmptyString(productsRaw?.heading, "Highlights"),
       body: nonEmptyString(productsRaw?.body, args.business.purpose),
+      imageAspectRatio: PRODUCT_IMAGE_ASPECT_RATIO,
       items,
     },
     enquirySection: buildEnquirySection(enquiryRaw),

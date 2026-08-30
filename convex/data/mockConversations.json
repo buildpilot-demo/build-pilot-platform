@@ -4,7 +4,7 @@
     {
       "id": "mock-restaurant-01",
       "industry": "Restaurant",
-      "businessCategory": "restaurant",
+      "businessCategory": "restuarant",
       "keywords": ["restaurant", "cafe", "café", "diner", "eatery", "food", "grill", "kitchen", "bistro"],
       "businessName": "{{businessName}}",
       "ownerName": "Hassan Ali",
@@ -196,7 +196,7 @@
     {
       "id": "mock-travel-01",
       "industry": "Travel & Tours Agency",
-      "businessCategory": "travel & tours",
+      "businessCategory": "travels",
       "keywords": ["travel", "tour", "tours", "tourism", "holiday", "excursion", "desert safari", "travel agency"],
       "businessName": "{{businessName}}",
       "ownerName": "Omar Khalil",
@@ -224,7 +224,7 @@
     {
       "id": "mock-realestate-01",
       "industry": "Real Estate Agency",
-      "businessCategory": "real estate",
+      "businessCategory": "real-estate",
       "keywords": ["real estate", "property", "properties", "realtor", "broker", "apartments", "villas", "realty"],
       "businessName": "{{businessName}}",
       "ownerName": "Nadia Saleh",

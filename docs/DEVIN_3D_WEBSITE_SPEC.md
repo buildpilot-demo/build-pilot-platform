@@ -150,8 +150,8 @@ The final frame must remain visible briefly at the end of the hero before the pr
 - Use another tall vertical track with a `100vh` sticky viewport.
 - Convert the section’s vertical scroll progress into a horizontal rail translation from right to left.
 - The rail starts with a short editorial title panel followed by the configured product/service panels.
-- Each panel contains one supplied static image, category label, concise heading, short description, and optional enquiry anchor.
-- Use large imagery and typography; do not use small generic cards.
+- Each panel contains one supplied static image rendered as a fixed square card (`aspect-ratio` from `site.config.ts`'s `productsSection.imageAspectRatio`, e.g. `1 / 1`, with `object-fit: cover`), plus a category label, concise heading, short description, and optional enquiry anchor.
+- Keep every panel's image card the same square size regardless of the source image's native dimensions; use large typography alongside it, and do not use small generic cards.
 - Translate the rail only as far as needed for its final edge to align with the viewport. The last panel must be fully readable before the section releases.
 - On screens below 768 px, panels may be 82–88vw wide but must still use the same scroll-controlled horizontal rail.
 - With reduced motion, remove pinning and show the items as a normal vertical list.
@@ -357,6 +357,11 @@ export const siteConfig = {
     heading: "Freshly made. Generously shared.",
     body: "From everyday dining to office lunches and celebrations, we build vibrant vegetarian tables around the way you gather.",
     scrollHeightVh: 500,
+    // Product/service images render as fixed square cards (CSS
+    // `aspect-ratio: 1 / 1` + `object-fit: cover`) instead of full-height
+    // panels, so every photo is a uniform size regardless of its source
+    // dimensions.
+    imageAspectRatio: "1:1",
     items: [
       {
         category: "Dine",
@@ -416,7 +421,7 @@ export const siteConfig = {
 export type SiteConfig = typeof siteConfig;
 ```
 
-The product renderer must resolve each item as `${siteConfig.assets.productsDirectory}/${item.image}`. Treat `item.image` strictly as a filename: reject or omit values containing `/`, `\\`, or `..` so a product cannot escape the selected collection.
+The product renderer must resolve each item as `${siteConfig.assets.productsDirectory}/${item.image}`. Treat `item.image` strictly as a filename: reject or omit values containing `/`, `\\`, or `..` so a product cannot escape the selected collection. Render every resolved image inside a fixed square card using `productsSection.imageAspectRatio` (CSS `aspect-ratio` + `object-fit: cover`) rather than a variable-height panel.
 
 If the starter repository already has a different `SiteConfig` type, preserve existing consumers and export this page configuration separately from the same file. Do not refactor unrelated schema code during the time box.
 

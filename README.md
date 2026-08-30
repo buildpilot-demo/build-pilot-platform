@@ -69,7 +69,7 @@ Configure these on the Convex deployment (via `npx convex env set NAME value`, o
 | `DEVIN_API_KEY`, `DEVIN_API_BASE_URL` | Automated site build sessions |
 | `FIREBASE_PROJECT_ID`, `FIREBASE_SITE_ID`, `FIREBASE_SITE_PREFIX` | Generated-site deployment target — see note below |
 | `GENERATED_SITE_CONVEX_URL` | The **shared, multi-tenant** Convex deployment (`buildpilot-sites` per the task plan's Stage 0 — a *second*, separate Convex project from this one) that every generated customer site's own frontend talks to. Must be that project's client API URL (`https://<other-deployment>.convex.cloud`) — **not** this deployment's own URL, and not a `.convex.site` URL (that domain is only for HTTP Actions, e.g. `CONVEX_CALLBACK_URL` below). |
-| `SITE_TENANT_PROVISION_TOKEN` | Shared secret authorizing `deployments.ts::deployToFirebase`'s cross-deployment call to `siteTenants:provisionTenant`. **Set the same value on both Convex deployments** (this one and `buildpilot-sites`, via `npx convex env set SITE_TENANT_PROVISION_TOKEN <value>` run from each project's directory) — this deployment sends it, `buildpilot-sites` checks it. |
+| `SITE_TENANT_PROVISION_TOKEN` | Shared secret authorizing `deployments.ts::deployToFirebase`'s cross-deployment call to `siteTenants:provisionTenant`. **There is no external provider for this value — you generate it yourself** (e.g. `openssl rand -hex 32`) and **set the same value on both Convex deployments** (this one and `buildpilot-sites`, via `npx convex env set SITE_TENANT_PROVISION_TOKEN <value>` run from each project's directory) — this deployment sends it, `buildpilot-sites` checks it. If `deployToFirebase` throws `SITE_TENANT_PROVISION_TOKEN is required`, it means this env var isn't set on **this** deployment yet — generate a value and set it here first. |
 | `CONVEX_CALLBACK_TOKEN` | Auth for inbound webhook callbacks (set on **this** Convex deployment) |
 | `CONVEX_CALLBACK_URL` | *Not* a Convex-deployment env var — set as a GitHub Actions **organization** variable (`buildpilot-demo` org → Settings → Secrets and variables → Actions), pointing generated repos' workflows back at **this** deployment's own HTTP Actions endpoint: `https://<this-deployment>.convex.site/webhooks/github-workflow` (see T4.9 in `docs/task-plan.md`). |
 
@@ -87,13 +87,23 @@ npm install
 npx convex dev    # first run: link to the buildpilot-sites project, or create it
 ```
 
-Set `SITE_TENANT_PROVISION_TOKEN` there too (same value as on this deployment — see the env var table above), then copy its dev/prod deployment URL into `GENERATED_SITE_CONVEX_URL` on **this** deployment. For a one-shot push without leaving `npx convex dev` running, use `npx convex dev --once` (pushes to your dev deployment) or `npx convex deploy` (pushes to `buildpilot-sites`'s own prod deployment — point `GENERATED_SITE_CONVEX_URL` at whichever one you actually deploy to).
+Generate a `SITE_TENANT_PROVISION_TOKEN` value once (e.g. `openssl rand -hex 32`) and set the **same value** on both deployments:
+
+```bash
+# from sites-backend/
+npx convex env set SITE_TENANT_PROVISION_TOKEN <value>
+
+# from the repo root (this deployment)
+npx convex env set SITE_TENANT_PROVISION_TOKEN <same-value>
+```
+
+Then copy `buildpilot-sites`'s dev/prod deployment URL into `GENERATED_SITE_CONVEX_URL` on **this** deployment. For a one-shot push without leaving `npx convex dev` running, use `npx convex dev --once` (pushes to your dev deployment) or `npx convex deploy` (pushes to `buildpilot-sites`'s own prod deployment — point `GENERATED_SITE_CONVEX_URL` at whichever one you actually deploy to).
 
 ### One-time setup: registering the starter template
 
 Repository preparation (`convex/github.ts`'s `prepareRepository`) seeds every customer site by generating a new repo from a pinned starter template commit. That pin lives in the `templateVersions` Convex table and is **not** populated automatically — it must be registered once per environment (fresh Convex deployment, or whenever you want to point at a different/updated starter repo).
 
-After setting `GITHUB_TOKEN`, `GITHUB_ORG`, and `GITHUB_STARTER_REPO` (e.g. `https://github.com/buildpilot-demo/buildpilot-starter-template.git`) on the Convex deployment, run:
+After setting `GITHUB_TOKEN`, `GITHUB_ORG`, and `GITHUB_STARTER_REPO` (e.g. `https://github.com/buildpilot-demo/build-pilot-starter-template.git`) on the Convex deployment, run:
 
 ```bash
 npx convex run github:configureStarterTemplate
