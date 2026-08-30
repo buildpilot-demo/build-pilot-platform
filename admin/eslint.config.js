@@ -6,10 +6,10 @@ import tseslint from 'typescript-eslint'
 import prettierConfig from 'eslint-config-prettier'
 
 export default tseslint.config(
-  { ignores: ['dist', 'coverage', 'convex/_generated'] },
+  { ignores: ['dist', 'coverage'] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ['src/**/*.{ts,tsx}'],
+    files: ['**/*.{ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
@@ -21,15 +21,6 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-    },
-  },
-  {
-    // Convex backend functions run in Convex's own server runtime, not the browser.
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ['convex/**/*.ts'],
-    languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.node,
     },
   },
   prettierConfig,

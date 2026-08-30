@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@convex': path.resolve(dirname, 'convex'),
+      '@convex': path.resolve(dirname, '../convex'),
     },
   },
   test: {

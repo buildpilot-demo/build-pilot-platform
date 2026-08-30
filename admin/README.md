@@ -1,9 +1,9 @@
-# BuildPilot
+# BuildPilot Admin
 
-React + TypeScript + Vite admin frontend, plus its Convex backend (`convex/`), for BuildPilot.
-Deployed to Firebase Hosting; talks only to the `buildpilot-admin` Convex deployment (see
-`docs/project-requirements.md` for the full architecture). Some routes below are still
-scaffolding-only placeholders ("Coming soon") until their owning stage implements them.
+React + TypeScript + Vite frontend for the BuildPilot admin dashboard. Deployed to Firebase
+Hosting; talks only to the `buildpilot-admin` Convex deployment (see `docs/project-requirements.md`
+for the full architecture). Some routes below are still scaffolding-only placeholders ("Coming
+soon") until their owning stage implements them.
 
 ## Structure
 
@@ -17,8 +17,6 @@ scaffolding-only placeholders ("Coming soon") until their owning stage implement
 - `src/lib/` — the Convex client (`convexClient.ts`) plus formatting/validation helpers
   (`format.ts`, `validation.ts`). Client-side validation here is UX-only; Convex remains the
   source of truth (see `docs/project-requirements.md` Section 12.2).
-- `convex/` — the Convex backend (schema, state machine, and every stage's functions). Sibling to
-  `src/`, not a separate package — see "Convex backend" below.
 
 ## Routes
 
@@ -34,20 +32,23 @@ scaffolding-only placeholders ("Coming soon") until their owning stage implement
 ## Setup
 
 ```bash
-npm install
-cp .env.example .env.local
+npm install         # from the repo root (npm workspaces)
+cp admin/.env.example admin/.env.local
 # edit .env.local and set VITE_CONVEX_URL to your Convex deployment URL
 ```
 
 ### Convex backend
 
-The Convex backend lives in `convex/`, a sibling of `src/` at the repo root (see `convex.json`).
-The frontend imports its generated API client via the `@convex/*` alias (`vite.config.ts`,
-`vitest.config.ts`, `tsconfig.app.json`), which points at `./convex`. That means **`npx convex dev`
-must be run at least once** before `npm run build`/`npm run test` will work —
-`convex/_generated/` is gitignored (not committed), so it doesn't exist until you do.
+The Convex backend lives in a sibling `convex/` directory at the repo root, not inside this
+package. This app imports its generated API client via the `@convex/*` alias
+(`vite.config.ts`, `vitest.config.ts`, `tsconfig.app.json`), which points at `../convex`. That
+means **`npx convex dev` must be run at least once from the repo root** before
+`npm run build`/`npm run test` here will work — `convex/_generated/` is gitignored there (not
+committed), so it doesn't exist until you do.
 
 ## Scripts
+
+Run from `admin/` (or prefix with `npm run <script> --workspace admin` from the repo root):
 
 - `npm run dev` — start the Vite dev server
 - `npm run build` — typecheck (`tsc -b`) and build for production
@@ -55,8 +56,6 @@ must be run at least once** before `npm run build`/`npm run test` will work —
 - `npm run lint` — ESLint
 - `npm run format` / `npm run format:check` — Prettier
 - `npm run test` / `npm run test:watch` — Vitest + React Testing Library
-- `npm run convex:dev` — `convex dev` (develop against a dev deployment, watching for changes)
-- `npm run convex:typecheck` — `tsc -p convex/tsconfig.json --noEmit`
 
 ## Health check
 
