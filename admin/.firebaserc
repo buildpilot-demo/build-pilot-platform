@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "default": "buildpilot-hackathon"
+  },
+  "targets": {
+    "buildpilot-hackathon": {
+      "hosting": {
+        "admin": ["buildpilot-admin"]
+      }
+    }
+  }
+}
