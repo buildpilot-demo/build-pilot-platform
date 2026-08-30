@@ -31,11 +31,11 @@
 // voiceCalls.ts beyond calling `internal.voiceCalls.startCall({ projectId })`.
 
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import { DEFAULT_CALL_PHONE_FALLBACK, normalizePhone } from "./businesses";
-import { transitionProject } from "./stateMachine";
+import { transitionProject, type ProjectState } from "./stateMachine";
 
 export const selectBusiness = mutation({
   args: {
@@ -132,5 +132,59 @@ export const selectBusiness = mutation({
     await ctx.scheduler.runAfter(0, internal.voiceCalls.startCall, { projectId });
 
     return { leadId, projectId, workflowRunId, correlationId };
+  },
+});
+
+// ---------------------------------------------------------------------------
+// listProjectsForDashboard -- Stage 8 (Person A), T7.x. Backs the Admin
+// UI's pipeline dashboard (/dashboard). Read-only: doesn't decide anything,
+// just reports the current state stateMachine.ts already computed.
+// ---------------------------------------------------------------------------
+
+export interface DashboardProjectRow {
+  projectId: Id<"projects">;
+  businessName: string;
+  correlationId: string;
+  /** The primary workflowRun's state (falls back to `projects.state` if, for some reason, no primary run exists yet). Null only for a row inserted this instant, before its first transitionProject call lands. */
+  state: ProjectState | null;
+  /** Set (mirrors the failure-metadata block) only while `state` is a `*_FAILED` state or MANUAL_INTERVENTION_REQUIRED. */
+  failedStage: string | null;
+  /** When `state` was entered -- i.e. how long the project has been in its *current* stage. */
+  stateEnteredAt: number;
+  createdAt: number;
+}
+
+export const listProjectsForDashboard = query({
+  args: {},
+  handler: async (ctx): Promise<DashboardProjectRow[]> => {
+    const projects = await ctx.db.query("projects").collect();
+
+    const rows = await Promise.all(
+      projects.map(async (project): Promise<DashboardProjectRow> => {
+        const [business, workflowRuns] = await Promise.all([
+          ctx.db.get(project.businessId),
+          ctx.db
+            .query("workflowRuns")
+            .withIndex("by_project", (q) => q.eq("projectId", project._id))
+            .collect(),
+        ]);
+        // The primary run is the one with no revisionRequestId (see
+        // convex/stateMachine.ts's own findWorkflowRun) -- a revision's own
+        // run is a separate row and isn't shown on this primary-pipeline view.
+        const primaryRun = workflowRuns.find((run) => run.revisionRequestId === undefined);
+
+        return {
+          projectId: project._id,
+          businessName: business?.name ?? "Unknown business",
+          correlationId: project.correlationId,
+          state: primaryRun?.state ?? project.state ?? null,
+          failedStage: primaryRun?.failedStage ?? project.failedStage ?? null,
+          stateEnteredAt: primaryRun?.updatedAt ?? project.updatedAt,
+          createdAt: project.createdAt,
+        };
+      }),
+    );
+
+    return rows.sort((a, b) => b.stateEnteredAt - a.stateEnteredAt);
   },
 });

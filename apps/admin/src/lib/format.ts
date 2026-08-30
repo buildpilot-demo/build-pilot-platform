@@ -40,3 +40,26 @@ export function formatTimestamp(timestampMs: number): string {
     timeStyle: 'short',
   })
 }
+
+/**
+ * Renders a duration (ms) as a short "elapsed" string, e.g. "42s", "3m 12s",
+ * "1h 05m". Intended for "time in this stage" -- computed from `Date.now()`
+ * at render time, not on a timer: this app has no setInterval/polling
+ * anywhere, so the value only refreshes when something (a Convex query
+ * subscription firing on real data, or an unrelated re-render) causes the
+ * component to render again.
+ */
+export function formatElapsed(durationMs: number): string {
+  const totalSeconds = Math.max(0, Math.floor(durationMs / 1000))
+  const hours = Math.floor(totalSeconds / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+
+  if (hours > 0) {
+    return `${hours}h ${String(minutes).padStart(2, '0')}m`
+  }
+  if (minutes > 0) {
+    return `${minutes}m ${String(seconds).padStart(2, '0')}s`
+  }
+  return `${seconds}s`
+}

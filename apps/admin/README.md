@@ -23,7 +23,7 @@ soon") until their owning stage implements them.
 | Path                   | Page                      | Filled in during           |
 | ---------------------- | ------------------------- | -------------------------- |
 | `/`                    | redirects to `/dashboard` | —                          |
-| `/dashboard`           | pipeline overview         | Stage 8                    |
+| `/dashboard`           | pipeline overview         | implemented (Stage 8 T7.x) |
 | `/search`              | business discovery        | implemented (Stage 3 T2.4) |
 | `/projects/:projectId` | project detail/tracking   | Stages 3-7                 |
 | `/health`              | deploy smoke test         | already implemented        |
