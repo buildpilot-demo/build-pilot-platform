@@ -212,6 +212,11 @@ export default defineSchema({
     location: v.optional(v.object({ lat: v.number(), lng: v.number() })),
     contactEligible: v.boolean(),
     doNotContact: v.boolean(),
+    // Additive (convex/businesses.ts, T2.2): why `phoneRaw`/`phoneE164` is
+    // trusted for outbound contact, since Context.dev can't verify a phone
+    // number actually belongs to the business it returned it for. Admins
+    // may override the number per-selection (T2.3) without changing this.
+    contactBasis: v.optional(v.string()),
     rawResponse: v.optional(v.any()), // original Context.dev payload, for audit/replay
     createdAt: v.number(),
     updatedAt: v.number(),
