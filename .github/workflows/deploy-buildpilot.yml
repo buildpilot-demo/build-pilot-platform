@@ -1,0 +1,52 @@
+name: Deploy BuildPilot admin
+
+# The BuildPilot admin console lives in admin/ within this repo (there is
+# no separate buildpilot-admin-ui repo at the time this workflow was
+# written) and deploys to its own Firebase Hosting site
+# (admin/firebase.json -> "buildpilot-admin"), separate from customer
+# sites. If the admin app is later split into its own repo, move this
+# workflow there and drop the paths/working-directory scoping.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "admin/**"
+      - ".github/workflows/deploy-buildpilot.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Build and deploy admin console
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: admin
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: admin/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_CONVEX_URL: ${{ vars.VITE_CONVEX_URL }}
+
+      - name: Authenticate to Firebase
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Deploy to Firebase Hosting
+        run: npx --yes firebase-tools@15 deploy --only hosting --project "${{ secrets.FIREBASE_PROJECT_ID }}" --non-interactive

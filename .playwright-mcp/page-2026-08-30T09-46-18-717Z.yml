@@ -1,0 +1,81 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: BP
+      - generic [ref=e7]:
+        - strong [ref=e8]: Build Pilot
+        - generic [ref=e9]: Operations console
+    - navigation "Main navigation" [ref=e10]:
+      - paragraph [ref=e11]: Workspace
+      - link "Overview" [ref=e12] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Business Discovery" [ref=e20] [cursor=pointer]:
+        - /url: /search
+      - link "System health" [ref=e25] [cursor=pointer]:
+        - /url: /health
+    - generic [ref=e31]:
+      - strong [ref=e32]: Live workspace
+      - generic [ref=e33]: Convex reactive sync
+  - generic [ref=e34]:
+    - banner [ref=e35]:
+      - generic [ref=e36]:
+        - paragraph [ref=e37]: Admin workspace
+        - strong [ref=e38]: Overview
+      - generic [ref=e39]:
+        - generic [ref=e40]: OP
+        - generic [ref=e41]:
+          - strong [ref=e42]: Operator
+          - generic [ref=e43]: Administrator
+    - main [ref=e44]:
+      - generic [ref=e46]:
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - paragraph [ref=e49]: Operations overview
+            - heading "Good to see you." [level=1] [ref=e50]
+            - paragraph [ref=e51]: Monitor every build from first contact through delivery.
+          - link "Find a project" [ref=e52] [cursor=pointer]:
+            - /url: /search
+        - region "Project summary" [ref=e53]:
+          - article [ref=e54]:
+            - generic [ref=e55]: Total projects
+            - strong [ref=e61]: "0"
+            - text: All recorded workflows
+          - article [ref=e62]:
+            - generic [ref=e63]: In progress
+            - strong [ref=e68]: "0"
+            - text: Active workflows
+          - article [ref=e69]:
+            - generic [ref=e70]: Delivered
+            - strong [ref=e76]: "0"
+            - text: Successful handoffs
+          - article [ref=e77]:
+            - generic [ref=e78]: Needs attention
+            - strong [ref=e83]: "0"
+            - text: Operator review required
+        - generic [ref=e84]:
+          - generic [ref=e85]:
+            - generic [ref=e86]:
+              - paragraph [ref=e87]: Live pipeline
+              - heading "Projects in flight" [level=2] [ref=e88]
+            - generic [ref=e89]: Live updates
+          - generic [ref=e91]:
+            - heading "No active projects" [level=3] [ref=e96]
+            - paragraph [ref=e97]: Select a business from search to start a new workflow.
+        - generic [ref=e98]:
+          - generic [ref=e99]:
+            - generic [ref=e100]:
+              - generic [ref=e101]:
+                - paragraph [ref=e102]: Current work
+                - heading "Recent projects" [level=2] [ref=e103]
+              - link "View all" [ref=e104] [cursor=pointer]:
+                - /url: /search
+            - generic [ref=e105]:
+              - heading "No projects found" [level=3] [ref=e110]
+              - paragraph [ref=e111]: Projects matching this view will appear here in real time.
+          - generic [ref=e112]:
+            - generic [ref=e114]:
+              - paragraph [ref=e115]: Live feed
+              - heading "Recent activity" [level=2] [ref=e116]
+            - generic [ref=e117]:
+              - heading "No activity yet" [level=3] [ref=e122]
+              - paragraph [ref=e123]: Workflow transitions and provider events will stream into this timeline.

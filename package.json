@@ -7,7 +7,7 @@
     "admin"
   ],
   "scripts": {
-    "dev": "convex dev",
+    "dev": "convex dev --typecheck disable",
     "typecheck": "tsc -p convex/tsconfig.json --noEmit"
   },
   "dependencies": {
