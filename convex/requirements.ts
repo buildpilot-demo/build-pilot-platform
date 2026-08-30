@@ -24,6 +24,7 @@ import {
   internalAction,
   internalMutation,
   internalQuery,
+  mutation,
   type MutationCtx,
 } from "./_generated/server";
 import { internal } from "./_generated/api";
@@ -162,6 +163,49 @@ export const extractRequirements = internalAction({
 // Registers this action so the Admin UI's "Replay Last Response" button
 // can re-invoke it for a project stalled at REQUIREMENTS_EXTRACTION.
 registerStageAction(STAGE, internal.requirements.extractRequirements);
+
+/**
+ * Section 11 Failure Recovery: "REQUIREMENTS_FAILED -> Retry Extraction ->
+ * Resume From: REQUIREMENTS_PROCESSING." Public mutation the Admin UI's
+ * "Retry Extraction" button (project detail panel) calls directly.
+ *
+ * Also accepts a project that already escalated to
+ * MANUAL_INTERVENTION_REQUIRED with `failedStage === "REQUIREMENTS_EXTRACTION"`
+ * — the common case in practice, since `recordInsufficientRequirements`
+ * above walks REQUIREMENTS_FAILED -> MANUAL_INTERVENTION_REQUIRED in the
+ * same mutation (no auto-retry window for a bad/placeholder OpenAI
+ * response), so an admin will usually see the latter rather than catching
+ * the transient REQUIREMENTS_FAILED state live. Both are valid
+ * `transitionProject` sources for REQUIREMENTS_PROCESSING.
+ */
+export const retryExtraction = mutation({
+  args: { projectId: v.id("projects") },
+  handler: async (ctx, { projectId }) => {
+    const project = await ctx.db.get(projectId);
+    if (!project) {
+      throw new Error(`retryExtraction: project ${projectId} not found`);
+    }
+
+    const resumable =
+      project.state === "REQUIREMENTS_FAILED" ||
+      (project.state === "MANUAL_INTERVENTION_REQUIRED" && project.failedStage === STAGE);
+    if (!resumable) {
+      throw new Error(
+        `retryExtraction: project ${projectId} is not stalled at ${STAGE} ` +
+          `(state=${project.state ?? "(unset)"}, failedStage=${project.failedStage ?? "(none)"})`,
+      );
+    }
+
+    await transitionProject(ctx, projectId, "REQUIREMENTS_PROCESSING", {
+      correlationId: project.correlationId,
+      stage: STAGE,
+      eventType: "ADMIN_RETRY",
+      reason: "Admin-triggered retry of requirement extraction",
+    });
+
+    await ctx.scheduler.runAfter(0, internal.requirements.extractRequirements, { projectId });
+  },
+});
 
 // ---------------------------------------------------------------------------
 // OpenAI live() call

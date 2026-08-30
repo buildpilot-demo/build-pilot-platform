@@ -188,3 +188,50 @@ export const listProjectsForDashboard = query({
     return rows.sort((a, b) => b.stateEnteredAt - a.stateEnteredAt);
   },
 });
+
+/**
+ * Aggregated reactive view backing the Admin UI's project detail panel
+ * (apps/admin's `/projects/:projectId`, scaffolded in Stage 2). Combines
+ * the project row with its latest voiceSession, latest transcript, and
+ * requirements row into a single query so the whole panel subscribes
+ * through one `useQuery` call — Convex re-runs and pushes this
+ * automatically whenever any of those four tables changes for this
+ * project (a new voiceSession, the transcript arriving, requirements
+ * being validated/failing, ...), no polling needed on the client.
+ */
+export const getProjectDetail = query({
+  args: { projectId: v.id("projects") },
+  handler: async (ctx, { projectId }) => {
+    const project = await ctx.db.get(projectId);
+    if (!project) {
+      return null;
+    }
+
+    const business = await ctx.db.get(project.businessId);
+
+    const voiceSessions = await ctx.db
+      .query("voiceSessions")
+      .withIndex("by_projectId", (q) => q.eq("projectId", projectId))
+      .collect();
+    voiceSessions.sort((a, b) => b.createdAt - a.createdAt);
+
+    const transcripts = await ctx.db
+      .query("transcripts")
+      .withIndex("by_projectId", (q) => q.eq("projectId", projectId))
+      .collect();
+    transcripts.sort((a, b) => b.receivedAt - a.receivedAt);
+
+    const requirements = await ctx.db
+      .query("requirements")
+      .withIndex("by_projectId", (q) => q.eq("projectId", projectId))
+      .unique();
+
+    return {
+      project,
+      businessName: business?.name ?? null,
+      voiceSession: voiceSessions[0] ?? null,
+      transcript: transcripts[0] ?? null,
+      requirements,
+    };
+  },
+});
