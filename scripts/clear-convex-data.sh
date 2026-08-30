@@ -19,7 +19,6 @@
 #   ./scripts/clear-convex-data.sh                 # clear dev deployment
 #   ./scripts/clear-convex-data.sh --prod           # clear prod deployment
 #   ./scripts/clear-convex-data.sh --deployment prod
-#   ./scripts/clear-convex-data.sh --skip-auth-tables   # keep users/sessions/etc.
 #
 # You will be asked to type CONFIRM before anything is deleted.
 #
@@ -59,27 +58,10 @@ APP_TABLES=(
   externalCallSettings
 )
 
-# Tables added by `authTables` from @convex-dev/auth (spread into the schema).
-# These hold login sessions/accounts for the admin app - clearing them will
-# sign every user out. Skip with --skip-auth-tables if you don't want that.
-AUTH_TABLES=(
-  users
-  authAccounts
-  authSessions
-  authRefreshTokens
-  authVerificationCodes
-  authRateLimits
-)
-
 CONVEX_FLAGS=()
-SKIP_AUTH_TABLES=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --skip-auth-tables)
-      SKIP_AUTH_TABLES=1
-      shift
-      ;;
     --prod)
       CONVEX_FLAGS+=(--prod)
       shift
@@ -96,9 +78,6 @@ while [[ $# -gt 0 ]]; do
 done
 
 TABLES=("${APP_TABLES[@]}")
-if [[ "$SKIP_AUTH_TABLES" -eq 0 ]]; then
-  TABLES+=("${AUTH_TABLES[@]}")
-fi
 
 echo "About to permanently delete ALL documents from ${#TABLES[@]} table(s)"
 echo "on deployment flags: ${CONVEX_FLAGS[*]:-<default: dev, from .env.local>}"
