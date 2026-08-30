@@ -1,5 +1,5 @@
 {
-  "description": "Sample ElevenLabs conversation transcripts between the Maya voice agent and a business owner, used when ELEVENLABS_MOCK_CONVERSATION=Y to simulate a completed outbound call without calling ElevenLabs/Twilio. Selected by convex/lib/mockConversations.ts and fed through the same recordElevenLabsTranscript path the real webhook uses. The `{{businessName}}` placeholder (in `businessName` and in transcript messages) is substituted with the real selected business's name at call time so the mock transcript, extracted requirements, and generated site all refer to the same business.",
+  "description": "Sample ElevenLabs conversation transcripts between the Shreya voice agent and a business owner, used when ELEVENLABS_MOCK_CONVERSATION=Y to simulate a completed outbound call without calling ElevenLabs/Twilio. Selected by convex/lib/mockConversations.ts and fed through the same recordElevenLabsTranscript path the real webhook uses. The `{{businessName}}` placeholder (in `businessName` and in transcript messages) is substituted with the real selected business's name at call time so the mock transcript, extracted requirements, and generated site all refer to the same business.",
   "conversations": [
     {
       "id": "mock-restaurant-01",
@@ -10,7 +10,7 @@
       "ownerName": "Hassan Ali",
       "language": "en",
       "transcript": [
-        { "role": "agent", "message": "Hi, this is Maya calling from BuildPilot. Am I speaking with the owner of {{businessName}}?" },
+        { "role": "agent", "message": "Hi, this is Shreya calling from BuildPilot. Am I speaking with the owner of {{businessName}}?" },
         { "role": "user", "message": "Yes, this is Hassan, I own the place. What's this about?" },
         { "role": "agent", "message": "Great to meet you, Hassan. We build a free, professional website for your business in about a minutes. I'd like to ask a few quick questions so we get it right. Can you tell me a bit about {{businessName}}?" },
         { "role": "user", "message": "Sure. We're a Levantine grill restaurant in Al Quoz, Dubai. We've been open for about six years, family-run, known for our mixed grills and fresh mezze." },
@@ -35,7 +35,7 @@
       "ownerName": "Fatima Rahman",
       "language": "en",
       "transcript": [
-        { "role": "agent", "message": "Hello, this is Maya from BuildPilot. Could I speak with the owner of {{businessName}}?" },
+        { "role": "agent", "message": "Hello, this is Shreya from BuildPilot. Could I speak with the owner of {{businessName}}?" },
         { "role": "user", "message": "Speaking, this is Fatima. Is this about the website offer?" },
         { "role": "agent", "message": "Yes exactly - we build a free professional website for your salon. First, can you describe your business a bit?" },
         { "role": "user", "message": "We're a beauty salon in Jumeirah Lakes Towers. We do hair styling, coloring, facials, manicures and pedicures, and bridal packages." },
@@ -61,7 +61,7 @@
       "ownerName": "Rajesh Kumar",
       "language": "en",
       "transcript": [
-        { "role": "agent", "message": "Hi, this is Maya calling from BuildPilot. Is this the owner of {{businessName}}?" },
+        { "role": "agent", "message": "Hi, this is Shreya calling from BuildPilot. Is this the owner of {{businessName}}?" },
         { "role": "user", "message": "Yes, Rajesh speaking. You mentioned a free website, right?" },
         { "role": "agent", "message": "That's right. Let's start with the basics - what does {{businessName}} do and where are you based?" },
         { "role": "user", "message": "We're a plumbing and general maintenance company based in Al Quoz, Dubai. We handle leak repairs, pipe installation, water heater servicing, and also general handyman jobs like drilling and small electrical fixes." },
@@ -86,7 +86,7 @@
       "ownerName": "Dr. Layla Haddad",
       "language": "en",
       "transcript": [
-        { "role": "agent", "message": "Hello, this is Maya from BuildPilot. Am I speaking with the owner or manager of {{businessName}}?" },
+        { "role": "agent", "message": "Hello, this is Shreya from BuildPilot. Am I speaking with the owner or manager of {{businessName}}?" },
         { "role": "user", "message": "Yes, this is Dr. Layla Haddad, I'm the owner. You're calling about a website?" },
         { "role": "agent", "message": "Exactly, we build a free professional website for clinics like yours. Tell me a little about {{businessName}}." },
         { "role": "user", "message": "We're a general and cosmetic dental clinic in Al Barsha, Dubai. We offer cleanings, fillings, root canals, teeth whitening, and Invisalign orthodontics." },
@@ -116,7 +116,7 @@
       "ownerName": "Mohammed Al Farsi",
       "language": "en",
       "transcript": [
-        { "role": "agent", "message": "Hi, this is Maya calling from BuildPilot. Is this the owner of {{businessName}}?" },
+        { "role": "agent", "message": "Hi, this is Shreya calling from BuildPilot. Is this the owner of {{businessName}}?" },
         { "role": "user", "message": "Yeah, this is Mohammed. What's this call about?" },
         { "role": "agent", "message": "We build a free professional website for garages like yours. Can you tell me a bit about {{businessName}}?" },
         { "role": "user", "message": "We're a full-service auto garage in Ras Al Khor, Dubai. We do general repairs, oil changes, brake and suspension work, AC servicing, and tyre replacement." },
@@ -146,7 +146,7 @@
       "ownerName": "Dr. Amina Yousef",
       "language": "en",
       "transcript": [
-        { "role": "agent", "message": "Hello, this is Maya calling from BuildPilot. Am I speaking with the owner or manager of {{businessName}}?" },
+        { "role": "agent", "message": "Hello, this is Shreya calling from BuildPilot. Am I speaking with the owner or manager of {{businessName}}?" },
         { "role": "user", "message": "Yes, this is Dr. Amina, I run the clinic. Is this about the free website?" },
         { "role": "agent", "message": "That's right, we build a free professional website for clinics like yours. Can you tell me a bit about {{businessName}}?" },
         { "role": "user", "message": "We're a general medical polyclinic in Al Barsha, Dubai. We have a general physician, a pediatrician, and a dermatologist on staff, plus a small lab for basic tests." },
@@ -174,7 +174,7 @@
       "ownerName": "Sara Ibrahim",
       "language": "en",
       "transcript": [
-        { "role": "agent", "message": "Hi, this is Maya calling from BuildPilot. Am I speaking with the owner of {{businessName}}?" },
+        { "role": "agent", "message": "Hi, this is Shreya calling from BuildPilot. Am I speaking with the owner of {{businessName}}?" },
         { "role": "user", "message": "Yes, this is Sara, I run the online store. What's this about?" },
         { "role": "agent", "message": "Great to meet you, Sara. We build a free professional website for businesses like yours. Can you tell me a bit about {{businessName}}?" },
         { "role": "user", "message": "We're an online shoe store based in Dubai selling sneakers, formal shoes, and sandals for men, women, and kids. Right now we mostly sell through Instagram." },
@@ -202,7 +202,7 @@
       "ownerName": "Omar Khalil",
       "language": "en",
       "transcript": [
-        { "role": "agent", "message": "Hi, this is Maya calling from BuildPilot. Is this the owner of {{businessName}}?" },
+        { "role": "agent", "message": "Hi, this is Shreya calling from BuildPilot. Is this the owner of {{businessName}}?" },
         { "role": "user", "message": "Yes, Omar here. You mentioned a free website, right?" },
         { "role": "agent", "message": "That's right. Let's start with the basics - what does {{businessName}} do and where are you based?" },
         { "role": "user", "message": "We're a travel and tours agency based in Deira, Dubai. We organize desert safaris, city tours, dhow cruises, and we also book holiday packages abroad." },
@@ -230,7 +230,7 @@
       "ownerName": "Nadia Saleh",
       "language": "en",
       "transcript": [
-        { "role": "agent", "message": "Hello, this is Maya from BuildPilot. Am I speaking with the owner of {{businessName}}?" },
+        { "role": "agent", "message": "Hello, this is Shreya from BuildPilot. Am I speaking with the owner of {{businessName}}?" },
         { "role": "user", "message": "Yes, this is Nadia, I run the agency. Is this about the website offer?" },
         { "role": "agent", "message": "Yes exactly - we build a free professional website for agencies like yours. Can you tell me a bit about {{businessName}}?" },
         { "role": "user", "message": "We're a real estate agency in Business Bay, Dubai. We handle apartment and villa sales, rentals, and property management for landlords." },

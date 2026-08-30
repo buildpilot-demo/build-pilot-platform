@@ -91,6 +91,16 @@ function parseGeminiResponse(payload: unknown, fallbackModel: string): LlmJsonRe
   return { providerRequestId, model, provider: "gemini", data: data as Value };
 }
 
+// OpenAI's reasoning-style models (o1/o3/o4/gpt-5, and their "-mini"/"-nano"
+// variants) only support the default temperature (1) and reject any other
+// value with an "unsupported_value" 400 error. Every other OpenAI-compatible
+// chat model (gpt-4o, gpt-4.1, Groq's Llama models, etc.) accepts a custom
+// temperature, so we only omit it for the reasoning family.
+function modelSupportsCustomTemperature(provider: LlmProvider, model: string): boolean {
+  if (provider !== "openai") return true;
+  return !/^(o1|o3|o4|gpt-5)(?:[-.]|$)/i.test(model.trim());
+}
+
 async function callOpenAiCompatibleJson(config: LlmConfig, request: LlmJsonRequest): Promise<LlmJsonResult> {
   // OpenAI supports strict json_schema response formatting. Groq only
   // guarantees that for a subset of models, so for it we fall back to a
@@ -101,7 +111,7 @@ async function callOpenAiCompatibleJson(config: LlmConfig, request: LlmJsonReque
     headers: { Authorization: `Bearer ${config.apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       model: config.model,
-      temperature: 0,
+      ...(modelSupportsCustomTemperature(config.provider, config.model) ? { temperature: 0 } : {}),
       response_format: useStrictSchema
         ? { type: "json_schema", json_schema: { name: request.schemaName, strict: true, schema: request.jsonSchema } }
         : { type: "json_object" },

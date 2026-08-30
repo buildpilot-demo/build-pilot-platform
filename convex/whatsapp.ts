@@ -56,6 +56,8 @@ type DeliveryContext = {
   recipient: string;
   liveUrl: string;
   correlationId: string;
+  businessName: string;
+  businessCategory: string;
 };
 
 type TwilioMessage = {
@@ -120,8 +122,9 @@ function whatsappAddress(value: string): string {
   return `whatsapp:${normalizeE164(value.replace(/^whatsapp:/i, ""))}`;
 }
 
-function deliveryBody(liveUrl: string): string {
-  return `Your website is live: ${liveUrl}\n\nReply to this WhatsApp message with any corrections or revision instructions.`;
+function deliveryBody(liveUrl: string, businessName: string, businessCategory: string): string {
+  const greeting = businessName.trim() ? `Hi ${businessName.trim()},` : "Hi,";
+  return `${greeting}\n\nThank you for choosing BuildPilot. Your new website for ${businessCategory} is ready to view:\n\n${liveUrl}\n\nReply to us if any changes are needed. Our support team will contact you.\n\nWarm regards,\nBuildPilot`;
 }
 
 async function twilioRequest(
@@ -222,7 +225,7 @@ export const sendDeliveryMessage = internalActionGeneric({
       const authToken = requiredEnv("TWILIO_AUTH_TOKEN");
       const from = whatsappAddress(requiredEnv("TWILIO_WHATSAPP_NUMBER"));
       const to = whatsappAddress(delivery.recipient);
-      const body = deliveryBody(delivery.liveUrl);
+      const body = deliveryBody(delivery.liveUrl, delivery.businessName, delivery.businessCategory);
       const message = await callExternal(ctx as unknown as ExternalCallContext, {
         stage: "WHATSAPP_DELIVERY",
         projectId: args.projectId,
@@ -327,6 +330,8 @@ export const prepareDelivery = internalQueryGeneric({
       recipient,
       liveUrl,
       correlationId: project.correlationId,
+      businessName: business.name,
+      businessCategory: business.category,
     };
   },
 });

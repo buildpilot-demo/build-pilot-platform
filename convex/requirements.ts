@@ -239,6 +239,14 @@ const EXTRACTION_SYSTEM_PROMPT = "Extract website requirements only from the sup
 // JSON response format and inline the schema in the prompt instead.
 const EXTRACTION_SYSTEM_PROMPT_WITH_SCHEMA = `${EXTRACTION_SYSTEM_PROMPT} Respond with a single JSON object that matches this JSON Schema exactly: ${JSON.stringify(requirementsJsonSchema)}`;
 
+// OpenAI's reasoning-style models (o1/o3/o4/gpt-5) only support the default
+// temperature (1) and reject any other value with an "unsupported_value"
+// 400 error, so we only send a custom temperature for other chat models.
+function modelSupportsCustomTemperature(provider: LlmProvider, model: string): boolean {
+  if (provider !== "openai") return true;
+  return !/^(o1|o3|o4|gpt-5)(?:[-.]|$)/i.test(model.trim());
+}
+
 async function callOpenAiCompatible(config: LlmConfig, transcript: string): Promise<ExtractionResponse> {
   const useStrictSchema = config.provider === "openai";
   const request = await fetch(`${config.baseUrl}/chat/completions`, {
@@ -246,7 +254,7 @@ async function callOpenAiCompatible(config: LlmConfig, transcript: string): Prom
     headers: { Authorization: `Bearer ${config.apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       model: config.model,
-      temperature: 0,
+      ...(modelSupportsCustomTemperature(config.provider, config.model) ? { temperature: 0 } : {}),
       response_format: useStrictSchema
         ? { type: "json_schema", json_schema: { name: "website_requirements", strict: true, schema: requirementsJsonSchema } }
         : { type: "json_object" },
