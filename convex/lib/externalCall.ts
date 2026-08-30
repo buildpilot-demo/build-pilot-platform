@@ -61,8 +61,7 @@ import {
   beginStageAttempt,
   completeStageAttempt,
   failStageAttempt,
-  escalateToManualIntervention,
-  DEFAULT_MAX_RETRIES,
+  type FailStageAttemptResult,
   type StageError,
 } from "./stageAttempt";
 import {
@@ -174,6 +173,54 @@ export class NonRetryableError extends Error {
   }
 }
 
+/**
+ * What `callExternal` throws when `live()` fails. Carries the bookkeeping
+ * outcome (`outcome.shouldEscalate` / `outcome.exhausted` /
+ * `outcome.backoffMs`) alongside the original error, because — unlike
+ * success/replay — **failure handling is stage-specific and this module
+ * deliberately does not do it for you**: only the stage's own action knows
+ * the name of its `*_FAILED` state (Section 8) and how to populate
+ * `failedStage`/`errorCode`/`retryCount`/`maxRetries` for
+ * `transitionProject`. The calling action MUST, on catching this:
+ *   1. Always `transitionProject(ctx, projectId, "<STAGE>_FAILED", {...})`
+ *      (Section 11's Failure Recovery table) — `stageAttempts`/
+ *      `integrationEvents` bookkeeping is already done by the time this is
+ *      thrown, but project/workflowRun state is NOT, since `TRANSITIONS`
+ *      in convex/stateMachine.ts only allows MANUAL_INTERVENTION_REQUIRED
+ *      to be entered *from* a `*_FAILED` state, never from an in-progress
+ *      one directly.
+ *   2. Only if `outcome.shouldEscalate` is true, follow up with
+ *      `escalateToManualIntervention` (convex/lib/stageAttempt.ts) — now
+ *      valid, since the project is in the `*_FAILED` state from step 1.
+ *   3. Otherwise (`outcome.shouldEscalate` false), schedule a retry with
+ *      `ctx.scheduler.runAfter(outcome.backoffMs, ...)` per Section 10's
+ *      bounded backoff, then transition `*_FAILED` -> the stage's queued
+ *      state (Section 11) when that retry runs.
+ */
+export class CallExternalError extends Error {
+  readonly stage: string;
+  readonly attemptId: Id<"stageAttempts">;
+  readonly stageError: StageError;
+  readonly outcome: FailStageAttemptResult;
+  readonly rawError: unknown;
+
+  constructor(
+    stage: string,
+    attemptId: Id<"stageAttempts">,
+    stageError: StageError,
+    outcome: FailStageAttemptResult,
+    rawError: unknown,
+  ) {
+    super(stageError.message);
+    this.name = "CallExternalError";
+    this.stage = stage;
+    this.attemptId = attemptId;
+    this.stageError = stageError;
+    this.outcome = outcome;
+    this.rawError = rawError;
+  }
+}
+
 function toStageError(rawError: unknown): StageError {
   if (rawError instanceof NonRetryableError) {
     return { message: rawError.message, retryable: false, code: rawError.code };
@@ -268,19 +315,19 @@ export async function callExternal<T>(
     });
     return result;
   } catch (rawError) {
-    await ctx.runMutation(internal.lib.externalCall.failAttempt, {
+    const stageError = toStageError(rawError);
+    const outcome = await ctx.runMutation(internal.lib.externalCall.failAttempt, {
       attemptId: begin.attemptId,
       projectId,
       stage,
       provider,
-      error: toStageError(rawError),
+      error: stageError,
       maxRetries: params.maxRetries,
     });
-    // Bookkeeping (retry/backoff decision + manual-intervention escalation)
-    // already happened server-side above; the caller still sees the
-    // original error so its own action can decide whether to schedule a
-    // retry with `ctx.scheduler.runAfter(backoffMs, ...)`.
-    throw rawError;
+    // stageAttempts/integrationEvents bookkeeping is done; state transition
+    // is NOT (see CallExternalError's doc comment for why) — the caller
+    // must handle that itself.
+    throw new CallExternalError(stage, begin.attemptId, stageError, outcome, rawError);
   }
 }
 
@@ -397,20 +444,10 @@ export const failAttempt = internalMutation({
       });
     }
 
-    if (outcome.shouldEscalate) {
-      const project = await ctx.db.get(projectId);
-      if (!project) {
-        throw new Error(`failAttempt: project ${projectId} not found`);
-      }
-      const attempt = await ctx.db.get(attemptId);
-      await escalateToManualIntervention(ctx, attemptId, {
-        correlationId: project.correlationId,
-        error,
-        retryCount: attempt?.attemptCount ?? 0,
-        maxRetries: maxRetries ?? DEFAULT_MAX_RETRIES,
-      });
-    }
-
+    // Deliberately does NOT call escalateToManualIntervention here — see
+    // CallExternalError's doc comment above `callExternal`. Only the stage
+    // owner knows the `*_FAILED` state transitionProject must pass through
+    // first, so this just reports the retry/escalate decision back.
     return outcome;
   },
 });
