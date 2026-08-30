@@ -1,40 +1,52 @@
-import { PRIMARY_STATES } from '../lib/pipelineStages'
-import { formatWorkflowState } from '../lib/format'
+import { motion, useReducedMotion } from "framer-motion";
+import { Link } from "react-router-dom";
+import type { Project } from "../lib/types";
+import { elapsedSince, label } from "../lib/format";
+import { PRIMARY_STAGES, resolvePipelineProgress } from "../lib/pipeline";
+import { StatusBadge } from "./StatusBadge";
 
-interface PipelineStepperProps {
-  /** Index into PRIMARY_STATES to highlight as "current", or null if unknown. */
-  currentStepIndex: number | null
-  /** Renders the current step in the failure color instead of the normal "active" color. */
-  isFlagged: boolean
-}
+export function PipelineStepper({ project, hideHeading = false }: { project: Project; hideHeading?: boolean }) {
+  const reduceMotion = useReducedMotion();
+  const { index, total, status } = resolvePipelineProgress(project.state, project.failedStage);
+  const currentLabel = status === "active" ? label(project.state) : label(project.failedStage ?? PRIMARY_STAGES[index]);
+  const elapsed = elapsedSince(project.updatedAt);
 
-/**
- * Horizontal stepper matching the primary state sequence in
- * docs/project-requirements.md Section 8 (PROJECT_CREATED through
- * DELIVERED). Purely presentational -- the project card around it decides
- * `currentStepIndex`/`isFlagged`.
- */
-export function PipelineStepper({ currentStepIndex, isFlagged }: PipelineStepperProps) {
   return (
-    <ol className="flex gap-1" aria-label="Pipeline progress">
-      {PRIMARY_STATES.map((state, index) => {
-        const isCurrent = index === currentStepIndex
-        const isReached = currentStepIndex !== null && index <= currentStepIndex
-
-        const color = isCurrent
-          ? isFlagged
-            ? 'bg-red-500 dark:bg-red-500'
-            : 'bg-slate-900 dark:bg-slate-100'
-          : isReached
-            ? 'bg-slate-400 dark:bg-slate-600'
-            : 'bg-slate-200 dark:bg-slate-800'
-
-        return (
-          <li key={state} title={formatWorkflowState(state)} className="min-w-[4px] flex-1">
-            <div className={`h-2 rounded-full ${color}`} />
-          </li>
-        )
-      })}
-    </ol>
-  )
+    <motion.article
+      className={`pipeline pipeline--${status}`}
+      layout
+      initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+    >
+      {!hideHeading && (
+        <div className="pipeline__heading">
+          <Link className="project-name" to={`/projects/${project._id}`}>{project.name || "Untitled project"}</Link>
+          <StatusBadge state={project.state} />
+        </div>
+      )}
+      <div className="pipeline__track" role="img" aria-label={`Stage ${index + 1} of ${total}: ${currentLabel}`}>
+        {PRIMARY_STAGES.map((stage, stageIndex) => {
+          const stepStatus = stageIndex < index ? "done" : stageIndex === index ? status : "pending";
+          return (
+            <motion.span
+              key={stage}
+              className={`pipeline__step pipeline__step--${stepStatus}`}
+              title={label(stage)}
+              initial={reduceMotion ? false : { scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              style={{ transformOrigin: "left" }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay: reduceMotion ? 0 : Math.min(stageIndex, 12) * 0.015 }}
+            />
+          );
+        })}
+      </div>
+      <div className="pipeline__meta">
+        <span className="pipeline__stage">{currentLabel}</span>
+        <span className="pipeline__elapsed">{elapsed} in this stage</span>
+        {status === "failed" && <span className="pipeline__note">{project.errorCode ?? "Failed"}{project.retryable ? " · retryable" : ""}</span>}
+        {status === "blocked" && <span className="pipeline__note">{project.errorCode ?? "Needs manual review"}</span>}
+      </div>
+    </motion.article>
+  );
 }

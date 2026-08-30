@@ -1,42 +1,26 @@
-import { Component, type ErrorInfo, type ReactNode } from 'react'
+import { Component, type ErrorInfo, type ReactNode } from "react";
 
-interface ErrorBoundaryProps {
-  children: ReactNode
-}
+export class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  state = { error: null as Error | null };
 
-interface ErrorBoundaryState {
-  error: Error | null
-}
-
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  state: ErrorBoundaryState = { error: null }
-
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { error }
+  static getDerivedStateFromError(error: Error) {
+    return { error };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Unhandled error caught by ErrorBoundary:', error, errorInfo)
-  }
-
-  handleReset = () => {
-    this.setState({ error: null })
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error("Admin UI error", error, info.componentStack);
   }
 
   render() {
-    const { error } = this.state
-    if (error) {
-      return (
-        <div role="alert" style={{ padding: '2rem', textAlign: 'center' }}>
-          <h1>Something went wrong</h1>
-          <p>{error.message}</p>
-          <button type="button" onClick={this.handleReset}>
-            Try again
-          </button>
-        </div>
-      )
-    }
-
-    return this.props.children
+    if (!this.state.error) return this.props.children;
+    return (
+      <main className="fatal-error">
+        <div className="fatal-error__mark">!</div>
+        <p className="eyebrow">Application error</p>
+        <h1>Something went wrong</h1>
+        <p className="muted">{this.state.error.message || "The console could not finish loading."}</p>
+        <button className="button button--primary" onClick={() => window.location.reload()}>Reload console</button>
+      </main>
+    );
   }
 }

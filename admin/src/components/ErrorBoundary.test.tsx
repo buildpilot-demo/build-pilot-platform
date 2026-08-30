@@ -1,34 +1,30 @@
-import { render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
-import { ErrorBoundary } from './ErrorBoundary'
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { ErrorBoundary } from "./ErrorBoundary";
 
-function Boom(): never {
-  throw new Error('boom')
+function Bomb(): never {
+  throw new Error("boom");
 }
 
-describe('ErrorBoundary', () => {
-  it('renders children when there is no error', () => {
+describe("ErrorBoundary", () => {
+  it("renders children when there is no error", () => {
     render(
       <ErrorBoundary>
-        <p>all good</p>
+        <div>all good</div>
       </ErrorBoundary>,
-    )
+    );
+    expect(screen.getByText("all good")).toBeInTheDocument();
+  });
 
-    expect(screen.getByText('all good')).toBeInTheDocument()
-  })
-
-  it('renders a fallback when a child throws', () => {
-    vi.spyOn(console, 'error').mockImplementation(() => {})
-
+  it("renders a fallback UI when a child throws", () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
     render(
       <ErrorBoundary>
-        <Boom />
+        <Bomb />
       </ErrorBoundary>,
-    )
-
-    expect(screen.getByRole('alert')).toHaveTextContent('Something went wrong')
-    expect(screen.getByText('boom')).toBeInTheDocument()
-
-    vi.restoreAllMocks()
-  })
-})
+    );
+    expect(screen.getByText("Something went wrong")).toBeInTheDocument();
+    expect(screen.getByText("boom")).toBeInTheDocument();
+    vi.restoreAllMocks();
+  });
+});
