@@ -191,7 +191,7 @@ export const listProjectsForDashboard = query({
 
 /**
  * Aggregated reactive view backing the Admin UI's project detail panel
- * (apps/admin's `/projects/:projectId`, scaffolded in Stage 2). Combines
+ * (the admin frontend's `/projects/:projectId`, scaffolded in Stage 2). Combines
  * the project row with its latest voiceSession, latest transcript, and
  * requirements row into a single query so the whole panel subscribes
  * through one `useQuery` call — Convex re-runs and pushes this

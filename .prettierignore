@@ -1,0 +1,9 @@
+dist
+coverage
+node_modules
+
+# The Convex backend and docs/ use their own conventions (double quotes,
+# semicolons) set by whoever owns them -- this app's Prettier config
+# (single quotes, no semicolons) only applies to the frontend.
+convex
+docs
