@@ -26,7 +26,7 @@ export function SearchPage() {
   // (50 snippets by default) under the hood regardless of this value; the
   // LLM extracts that pool down to at most this many leads, with or without
   // their own website. See convex/businesses.ts::searchBusinesses.
-  const [maxResults, setMaxResults] = useState("50");
+  const [maxResults, setMaxResults] = useState("5");
   // No longer operator-editable in the UI — every call uses the admin app's
   // configured default number.
   const callPhone = import.meta.env.VITE_DEFAULT_CALL_PHONE?.trim() ?? "";
@@ -34,10 +34,11 @@ export function SearchPage() {
   const [busy, setBusy] = useState(false);
   const [selecting, setSelecting] = useState<string>();
   const [message, setMessage] = useState<string>();
-  // Hides businesses that already have a lead/project underway or finished
-  // (see convex/businesses.ts::listBusinesses's excludeWithProject) — an
-  // operator-facing filter, independent of the search form above.
-  const [hideWithProject, setHideWithProject] = useState(false);
+  // Narrows the results list to one category (see
+  // convex/businesses.ts::listBusinesses's own `category` arg) — an
+  // operator-facing filter, independent of whatever category the search
+  // form above was last submitted with. Empty string = all categories.
+  const [categoryFilter, setCategoryFilter] = useState("");
   // Cursor stack for a classic Prev/Next pager on top of Convex's forward-only
   // cursor pagination: stack[0] is always the first page (cursor null); each
   // "Next" push the page we're leaving's continueCursor, "Previous" pops back
@@ -47,7 +48,7 @@ export function SearchPage() {
   const pageIndex = cursorStack.length - 1;
   const page = useQuery(adminApi.businesses, {
     ...(submitted ?? {}),
-    ...(hideWithProject ? { excludeWithProject: true } : {}),
+    ...(categoryFilter ? { category: categoryFilter } : {}),
     paginationOpts: { numItems: PAGE_SIZE, cursor: cursorStack[pageIndex] },
   });
 
@@ -63,7 +64,7 @@ export function SearchPage() {
       const result = await searchBusinesses({
         ...filters,
         ...(Number.isFinite(parsedRadius) && parsedRadius > 0 ? { radius: parsedRadius } : {}),
-        maxResults: Number.isFinite(parsedMaxResults) && parsedMaxResults > 0 ? parsedMaxResults : 50,
+        maxResults: Number.isFinite(parsedMaxResults) && parsedMaxResults > 0 ? parsedMaxResults : 5,
       });
       setSubmitted(filters);
       setCursorStack([null]);
@@ -113,15 +114,17 @@ export function SearchPage() {
       <div className="panel__header">
         <div><p className="eyebrow">Discovery results</p><h2>Businesses</h2></div>
         <label className="filter-toggle">
-          <input
-            type="checkbox"
-            checked={hideWithProject}
+          Category
+          <select
+            value={categoryFilter}
             onChange={(event) => {
-              setHideWithProject(event.target.checked);
+              setCategoryFilter(event.target.value);
               setCursorStack([null]);
             }}
-          />
-          Hide businesses with a started or completed project
+          >
+            <option value="">All categories</option>
+            {BUSINESS_CATEGORIES.map((option) => <option key={option} value={option}>{option}</option>)}
+          </select>
         </label>
       </div>
       {page === undefined ? <Loading label="Loading businesses" /> : page.page.length === 0 ? <EmptyState title="No businesses found" body="Try another city, area, or category." /> : <div className="service-list">{page.page.map((business, index) => {

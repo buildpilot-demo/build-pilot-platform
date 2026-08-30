@@ -6,6 +6,7 @@ import { Loading, EmptyState } from "../components/Loading";
 import { ProjectTable } from "../components/ProjectTable";
 import { ActivityTimeline } from "../components/ActivityTimeline";
 import { PipelineStepper } from "../components/PipelineStepper";
+import { FlowAnimation } from "../components/FlowAnimation";
 import { LayersIcon, PulseIcon, CheckCircleIcon, WarningIcon } from "../components/Icons";
 
 const TERMINAL_STATES = new Set(["DELIVERED", "CANCELLED"]);
@@ -24,6 +25,7 @@ export function DashboardPage() {
   const activeProjects = projects.filter((project) => !TERMINAL_STATES.has(project.state));
 
   return <div className="page-stack">
+    <FlowAnimation />
     <section className="page-heading"><div><p className="eyebrow">Operations overview</p><h1>Good to see you.</h1><p>Monitor every build from first contact through delivery.</p></div><Link className="button button--primary" to="/search">Find a project</Link></section>
     <section className="metric-grid" aria-label="Project summary">
       <Metric label="Total projects" value={totals.projects ?? projects.length} detail="All recorded workflows" delay={0} />

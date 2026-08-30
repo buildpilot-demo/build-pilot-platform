@@ -86,8 +86,9 @@ type WebSearchResult = { url: string; title: string; description: string };
 // Context.dev rejects numResults below 10, hence the floor.
 const CONTEXTDEV_FETCH_COUNT = Math.max(10, Math.min(100, Math.floor(Number(process.env.CONTEXTDEV_FETCH_COUNT) || 50)));
 
-// Default/ceiling for the final, LLM-extracted lead count (the Admin UI's
-// "Max Results" field defaults to this too — see admin/src/pages/SearchPage.tsx).
+// Default/ceiling for the final, LLM-extracted lead count when `maxResults`
+// is omitted entirely (the Admin UI always sends an explicit value — see
+// admin/src/pages/SearchPage.tsx, which defaults its own field to 5).
 const DEFAULT_FINAL_MAX_RESULTS = 50;
 const FINAL_MAX_RESULTS_CAP = CONTEXTDEV_FETCH_COUNT;
 
@@ -257,7 +258,7 @@ export const searchBusinesses = actionGeneric({
     const category = args.category.trim();
     if (!city || !category) throw new Error("City and category are required");
     // maxResults here is the *final*, LLM-extracted lead count (Admin UI
-    // default 50) — not how many raw snippets context.dev fetches, which is
+    // default 5) — not how many raw snippets context.dev fetches, which is
     // the separately-configured CONTEXTDEV_FETCH_COUNT below.
     const finalMaxResults = Math.max(1, Math.min(FINAL_MAX_RESULTS_CAP, Math.floor(args.maxResults ?? DEFAULT_FINAL_MAX_RESULTS)));
     const searchArgs = { ...args, city, category, maxResults: finalMaxResults };

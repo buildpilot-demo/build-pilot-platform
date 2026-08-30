@@ -408,6 +408,12 @@ tbody tr:last-child td { border-bottom: 0; }
 
 .filter-toggle { display: flex; align-items: center; gap: 7px; color: var(--color-text-secondary); font-size: 0.76rem; font-weight: 500; cursor: pointer; user-select: none; white-space: nowrap; }
 .filter-toggle input { width: 15px; height: 15px; accent-color: var(--indigo-600); cursor: pointer; }
+.filter-toggle select {
+  border: 1px solid var(--color-border-strong); border-radius: var(--radius-sm); padding: 6px 10px;
+  font-size: 0.76rem; font-weight: 500; color: var(--color-text); background: var(--color-surface);
+  cursor: pointer; transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+}
+.filter-toggle select:focus-visible { border-color: var(--indigo-400); box-shadow: var(--shadow-focus); }
 
 .service-list { display: flex; flex-direction: column; }
 .service-list .service-row:last-child { border-bottom: 0; }
@@ -551,6 +557,142 @@ tbody tr:last-child td { border-bottom: 0; }
 .pipeline--blocked .pipeline__note { color: var(--color-warning-strong); background: var(--color-warning-soft); }
 
 .scrim { display: none; }
+
+/* ==========================================================================
+   Flow animation (hero banner, Dashboard) — Convex -> ElevenLabs -> Twilio
+   -> Devin -> GitHub -> WhatsApp, chip by chip, on an endless loop.
+   ========================================================================== */
+.flow-banner {
+  position: relative; overflow: hidden; border-radius: var(--radius-lg); border: 1px solid var(--indigo-200);
+  padding: 34px 32px 38px;
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(99, 102, 241, 0.16), transparent 60%),
+    radial-gradient(120% 140% at 100% 100%, rgba(139, 92, 246, 0.14), transparent 60%),
+    linear-gradient(180deg, #ffffff, var(--indigo-50));
+  box-shadow: var(--shadow-md);
+}
+.flow-banner__intro { max-width: 62ch; margin-bottom: 30px; }
+.flow-banner__caption {
+  margin: 0 0 8px; color: var(--indigo-600); font-size: 0.68rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.flow-banner__heading { margin: 0; font-size: 1.5rem; line-height: 1.25; color: var(--color-text); }
+
+.flow-banner__track { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 56px; }
+.flow-banner__rail {
+  position: absolute; left: 0; right: 0; top: 50%; height: 6px; margin-top: -3px;
+  border-radius: var(--radius-full); background: rgba(99, 102, 241, 0.14); overflow: hidden; z-index: 0;
+}
+.flow-banner__fill {
+  display: block; height: 100%; width: 0%; border-radius: var(--radius-full);
+  background: linear-gradient(90deg, var(--indigo-500), var(--violet-600));
+  animation: flow-fill var(--flow-duration) linear infinite;
+}
+@keyframes flow-fill {
+  0% { width: 0%; }
+  90% { width: 100%; }
+  100% { width: 100%; }
+}
+
+.flow-chip {
+  position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+  padding: 8px 16px; border-radius: var(--radius-full); background: var(--color-surface);
+  border: 1.5px solid var(--color-border-strong); box-shadow: var(--shadow-xs);
+  transition: none;
+}
+.flow-chip__icon { display: inline-flex; }
+.flow-chip__icon svg { width: 16px; height: 16px; display: block; }
+.flow-chip__label { font-size: 0.8rem; font-weight: 700; color: var(--color-text-secondary); white-space: nowrap; }
+
+/* Eight fixed keyframe sets, one per integration (Convex, Context.dev,
+   ElevenLabs, Twilio, Devin, GitHub, Firebase, WhatsApp), activating at
+   0/12.9/25.7/38.6/51.4/64.3/77.1/90% — all sharing the exact same
+   `animation` timeline as .flow-banner__fill, so every chip lights up as
+   the fill reaches it and every chip clears back to neutral in the same
+   instant the fill resets to 0%. */
+.flow-chip[data-index="0"] { animation: flow-chip-0 var(--flow-duration) linear infinite; }
+.flow-chip[data-index="1"] { animation: flow-chip-1 var(--flow-duration) linear infinite; }
+.flow-chip[data-index="2"] { animation: flow-chip-2 var(--flow-duration) linear infinite; }
+.flow-chip[data-index="3"] { animation: flow-chip-3 var(--flow-duration) linear infinite; }
+.flow-chip[data-index="4"] { animation: flow-chip-4 var(--flow-duration) linear infinite; }
+.flow-chip[data-index="5"] { animation: flow-chip-5 var(--flow-duration) linear infinite; }
+.flow-chip[data-index="6"] { animation: flow-chip-6 var(--flow-duration) linear infinite; }
+.flow-chip[data-index="7"] { animation: flow-chip-7 var(--flow-duration) linear infinite; }
+.flow-chip[data-index="0"] .flow-chip__label, .flow-chip[data-index="0"] .flow-chip__icon { animation: flow-chip-fg-0 var(--flow-duration) linear infinite; }
+.flow-chip[data-index="1"] .flow-chip__label, .flow-chip[data-index="1"] .flow-chip__icon { animation: flow-chip-fg-1 var(--flow-duration) linear infinite; }
+.flow-chip[data-index="2"] .flow-chip__label, .flow-chip[data-index="2"] .flow-chip__icon { animation: flow-chip-fg-2 var(--flow-duration) linear infinite; }
+.flow-chip[data-index="3"] .flow-chip__label, .flow-chip[data-index="3"] .flow-chip__icon { animation: flow-chip-fg-3 var(--flow-duration) linear infinite; }
+.flow-chip[data-index="4"] .flow-chip__label, .flow-chip[data-index="4"] .flow-chip__icon { animation: flow-chip-fg-4 var(--flow-duration) linear infinite; }
+.flow-chip[data-index="5"] .flow-chip__label, .flow-chip[data-index="5"] .flow-chip__icon { animation: flow-chip-fg-5 var(--flow-duration) linear infinite; }
+.flow-chip[data-index="6"] .flow-chip__label, .flow-chip[data-index="6"] .flow-chip__icon { animation: flow-chip-fg-6 var(--flow-duration) linear infinite; }
+.flow-chip[data-index="7"] .flow-chip__label, .flow-chip[data-index="7"] .flow-chip__icon { animation: flow-chip-fg-7 var(--flow-duration) linear infinite; }
+
+@keyframes flow-chip-0 {
+  0% { transform: scale(1.12); border-color: var(--indigo-500); background: linear-gradient(135deg, var(--indigo-500), var(--violet-600)); box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.18), var(--shadow-sm); }
+  3% { transform: scale(1); border-color: var(--indigo-500); background: linear-gradient(135deg, var(--indigo-500), var(--violet-600)); box-shadow: var(--shadow-sm); }
+  100% { transform: scale(1); border-color: var(--indigo-500); background: linear-gradient(135deg, var(--indigo-500), var(--violet-600)); box-shadow: var(--shadow-sm); }
+}
+@keyframes flow-chip-fg-0 { 0%, 100% { color: #fff; } }
+
+@keyframes flow-chip-1 {
+  0%, 12.9% { transform: scale(1); border-color: var(--color-border-strong); background: var(--color-surface); box-shadow: var(--shadow-xs); }
+  15.9% { transform: scale(1.12); border-color: var(--indigo-500); background: linear-gradient(135deg, var(--indigo-500), var(--violet-600)); box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.18), var(--shadow-sm); }
+  18.9%, 100% { transform: scale(1); border-color: var(--indigo-500); background: linear-gradient(135deg, var(--indigo-500), var(--violet-600)); box-shadow: var(--shadow-sm); }
+}
+@keyframes flow-chip-fg-1 { 0%, 12.9% { color: var(--color-text-secondary); } 15.9%, 100% { color: #fff; } }
+
+@keyframes flow-chip-2 {
+  0%, 25.7% { transform: scale(1); border-color: var(--color-border-strong); background: var(--color-surface); box-shadow: var(--shadow-xs); }
+  28.7% { transform: scale(1.12); border-color: var(--indigo-500); background: linear-gradient(135deg, var(--indigo-500), var(--violet-600)); box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.18), var(--shadow-sm); }
+  31.7%, 100% { transform: scale(1); border-color: var(--indigo-500); background: linear-gradient(135deg, var(--indigo-500), var(--violet-600)); box-shadow: var(--shadow-sm); }
+}
+@keyframes flow-chip-fg-2 { 0%, 25.7% { color: var(--color-text-secondary); } 28.7%, 100% { color: #fff; } }
+
+@keyframes flow-chip-3 {
+  0%, 38.6% { transform: scale(1); border-color: var(--color-border-strong); background: var(--color-surface); box-shadow: var(--shadow-xs); }
+  41.6% { transform: scale(1.12); border-color: var(--indigo-500); background: linear-gradient(135deg, var(--indigo-500), var(--violet-600)); box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.18), var(--shadow-sm); }
+  44.6%, 100% { transform: scale(1); border-color: var(--indigo-500); background: linear-gradient(135deg, var(--indigo-500), var(--violet-600)); box-shadow: var(--shadow-sm); }
+}
+@keyframes flow-chip-fg-3 { 0%, 38.6% { color: var(--color-text-secondary); } 41.6%, 100% { color: #fff; } }
+
+@keyframes flow-chip-4 {
+  0%, 51.4% { transform: scale(1); border-color: var(--color-border-strong); background: var(--color-surface); box-shadow: var(--shadow-xs); }
+  54.4% { transform: scale(1.12); border-color: var(--indigo-500); background: linear-gradient(135deg, var(--indigo-500), var(--violet-600)); box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.18), var(--shadow-sm); }
+  57.4%, 100% { transform: scale(1); border-color: var(--indigo-500); background: linear-gradient(135deg, var(--indigo-500), var(--violet-600)); box-shadow: var(--shadow-sm); }
+}
+@keyframes flow-chip-fg-4 { 0%, 51.4% { color: var(--color-text-secondary); } 54.4%, 100% { color: #fff; } }
+
+@keyframes flow-chip-5 {
+  0%, 64.3% { transform: scale(1); border-color: var(--color-border-strong); background: var(--color-surface); box-shadow: var(--shadow-xs); }
+  67.3% { transform: scale(1.12); border-color: var(--indigo-500); background: linear-gradient(135deg, var(--indigo-500), var(--violet-600)); box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.18), var(--shadow-sm); }
+  70.3%, 100% { transform: scale(1); border-color: var(--indigo-500); background: linear-gradient(135deg, var(--indigo-500), var(--violet-600)); box-shadow: var(--shadow-sm); }
+}
+@keyframes flow-chip-fg-5 { 0%, 64.3% { color: var(--color-text-secondary); } 67.3%, 100% { color: #fff; } }
+
+@keyframes flow-chip-6 {
+  0%, 77.1% { transform: scale(1); border-color: var(--color-border-strong); background: var(--color-surface); box-shadow: var(--shadow-xs); }
+  80.1% { transform: scale(1.12); border-color: var(--indigo-500); background: linear-gradient(135deg, var(--indigo-500), var(--violet-600)); box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.18), var(--shadow-sm); }
+  83.1%, 100% { transform: scale(1); border-color: var(--indigo-500); background: linear-gradient(135deg, var(--indigo-500), var(--violet-600)); box-shadow: var(--shadow-sm); }
+}
+@keyframes flow-chip-fg-6 { 0%, 77.1% { color: var(--color-text-secondary); } 80.1%, 100% { color: #fff; } }
+
+@keyframes flow-chip-7 {
+  0%, 90% { transform: scale(1); border-color: var(--color-border-strong); background: var(--color-surface); box-shadow: var(--shadow-xs); }
+  93% { transform: scale(1.12); border-color: var(--emerald-500); background: linear-gradient(135deg, var(--emerald-500), var(--indigo-500)); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.2), var(--shadow-sm); }
+  96%, 100% { transform: scale(1); border-color: var(--emerald-500); background: linear-gradient(135deg, var(--emerald-500), var(--indigo-500)); box-shadow: var(--shadow-sm); }
+}
+@keyframes flow-chip-fg-7 { 0%, 90% { color: var(--color-text-secondary); } 93%, 100% { color: #fff; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-banner__fill, .flow-chip, .flow-chip__label, .flow-chip__icon { animation: none; }
+  .flow-banner__fill { width: 55%; }
+  .flow-chip:first-child { border-color: var(--indigo-500); background: linear-gradient(135deg, var(--indigo-500), var(--violet-600)); }
+  .flow-chip:first-child .flow-chip__label, .flow-chip:first-child .flow-chip__icon { color: #fff; }
+}
+@media (max-width: 720px) {
+  .flow-banner__track { flex-wrap: wrap; gap: 12px 8px; }
+  .flow-banner__rail { display: none; }
+}
 
 /* ==========================================================================
    Responsive
