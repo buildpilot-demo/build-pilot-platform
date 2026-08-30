@@ -49,5 +49,11 @@ jobs:
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
+      - name: Ensure Firebase Hosting site exists
+        run: |
+          if ! npx --yes firebase-tools@15 hosting:sites:list --project "${{ secrets.FIREBASE_PROJECT_ID }}" --json | grep -q '"buildpilot-admin"'; then
+            npx --yes firebase-tools@15 hosting:sites:create buildpilot-admin --project "${{ secrets.FIREBASE_PROJECT_ID }}"
+          fi
+
       - name: Deploy to Firebase Hosting
         run: npx --yes firebase-tools@15 deploy --only hosting --project "${{ secrets.FIREBASE_PROJECT_ID }}" --non-interactive
