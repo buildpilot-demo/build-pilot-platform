@@ -17,7 +17,7 @@ function renderAt(path: string) {
 }
 
 describe('App routing', () => {
-  it('redirects / to the dashboard placeholder', () => {
+  it('redirects / to the dashboard', () => {
     renderAt('/')
     expect(screen.getByRole('heading', { name: 'Pipeline dashboard' })).toBeInTheDocument()
   })
