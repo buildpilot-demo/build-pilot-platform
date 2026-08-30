@@ -10,8 +10,19 @@ import { Loading, EmptyState } from "../components/Loading";
 // Discovery results table page size — see convex/businesses.ts::listBusinesses.
 const PAGE_SIZE = 10;
 
-// Business categories offered in the discovery search form.
-const BUSINESS_CATEGORIES = ["Restaurant", "Medical", "Ecommerce", "Travel & Tours", "Real Estate"];
+// Business categories offered in the discovery search form. `key` matches
+// the buildpilot-starter-template `public/assets/{key}` folder name (see
+// convex/lib/siteConfig3d.ts::ASSET_COLLECTIONS/resolveAssetCollection) so
+// the submitted category text maps cleanly onto that template's asset
+// collections; `label` is the operator-facing display text.
+const BUSINESS_CATEGORIES = [
+  { key: "cafe", label: "Cafe" },
+  { key: "ecommerce", label: "Ecommerce" },
+  { key: "medical", label: "Medical" },
+  { key: "real-estate", label: "Real Estate" },
+  { key: "restuarant", label: "Restaurant" },
+  { key: "travels", label: "Travel & Tours" },
+];
 
 export function SearchPage() {
   const navigate = useNavigate();
@@ -20,7 +31,7 @@ export function SearchPage() {
   const selectBusiness = useMutation(adminApi.selectBusiness);
   const [city, setCity] = useState("Dubai");
   const [area, setArea] = useState("");
-  const [category, setCategory] = useState("Restaurant");
+  const [category, setCategory] = useState("restuarant");
   const [radius, setRadius] = useState("10");
   // Final, LLM-extracted lead count — context.dev fetches a larger raw pool
   // (50 snippets by default) under the hood regardless of this value; the
@@ -101,7 +112,7 @@ export function SearchPage() {
         <label className="search-input search-input--category">
           <span className="sr-only">Category</span>
           <select required value={category} onChange={(event) => setCategory(event.target.value)}>
-            {BUSINESS_CATEGORIES.map((option) => <option key={option} value={option}>{option}</option>)}
+            {BUSINESS_CATEGORIES.map((option) => <option key={option.key} value={option.key}>{option.label}</option>)}
           </select>
         </label>
         <label className="search-input search-input--narrow"><span className="sr-only">Radius (km)</span><input type="number" min="1" value={radius} onChange={(event) => setRadius(event.target.value)} placeholder="Radius (km)" /></label>
@@ -123,7 +134,7 @@ export function SearchPage() {
             }}
           >
             <option value="">All categories</option>
-            {BUSINESS_CATEGORIES.map((option) => <option key={option} value={option}>{option}</option>)}
+            {BUSINESS_CATEGORIES.map((option) => <option key={option.key} value={option.key}>{option.label}</option>)}
           </select>
         </label>
       </div>

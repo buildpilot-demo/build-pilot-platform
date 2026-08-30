@@ -111,9 +111,20 @@ export type AssetCollection = keyof typeof ASSET_COLLECTIONS;
 export function resolveAssetCollection(businessCategory: string): AssetCollection | null {
   const normalized = businessCategory.toLowerCase();
   if (/\b(cafe|coffee|bakery|tea|patisserie)\b/.test(normalized)) return "cafe";
-  if (/\b(restaurant|dining|food|eatery|kitchen|bistro|diner|grill|bbq|cuisine)\b/.test(normalized)) return "restuarant";
+  // "restuarant" is also matched directly since that's the literal value
+  // sent by the admin discovery form's category dropdown (see
+  // admin/src/pages/SearchPage.tsx::BUSINESS_CATEGORIES), matching this
+  // folder's intentionally-misspelled name.
+  if (/\b(restaurant|restuarant|dining|food|eatery|kitchen|bistro|diner|grill|bbq|cuisine)\b/.test(normalized)) return "restuarant";
   if (/\b(medical|clinic|dental|dentist|doctor|physician|hospital|healthcare|orthopaedic|orthopedic|diagnostic|pharmacy)\b/.test(normalized)) return "medical";
   if (/\b(e-?commerce|online\s?store|online\s?shop|webshop|web\s?store|retail|boutique|marketplace)\b/.test(normalized)) return "ecommerce";
+  // "real-estate" and "travels" are recognized here (matching the admin
+  // discovery form's category dropdown keys) but have no asset collection
+  // in ASSET_COLLECTIONS yet, so they intentionally still resolve to null
+  // (plain variant) until a matching `public/assets/{slug}` frame/product
+  // collection is added for each.
+  if (/\b(real[- ]?estate|realty|propert(?:y|ies))\b/.test(normalized)) return null;
+  if (/\b(travels?|tour(?:s|ism)?|holiday|vacation)\b/.test(normalized)) return null;
   return null;
 }
 
