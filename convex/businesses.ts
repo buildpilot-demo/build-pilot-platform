@@ -27,7 +27,9 @@ import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 
 const CONTEXTDEV_DEFAULT_BASE_URL = "https://api.context.dev/v1";
-const DEFAULT_CALL_PHONE_FALLBACK = "+971588711809";
+// Exported so convex/projects.ts::selectBusiness falls back to the exact
+// same default when a business has no existing number to reuse.
+export const DEFAULT_CALL_PHONE_FALLBACK = "+971588711809";
 const MIN_NUM_RESULTS = 10;
 const MAX_NUM_RESULTS = 100;
 
@@ -46,6 +48,22 @@ interface ContextDevSearchResponse {
 function clampNumResults(requested: number | undefined): number {
   const value = requested ?? MIN_NUM_RESULTS;
   return Math.min(MAX_NUM_RESULTS, Math.max(MIN_NUM_RESULTS, Math.round(value)));
+}
+
+/**
+ * Best-effort phone normalization towards E.164 ("+" followed by digits
+ * only). Used by convex/projects.ts::selectBusiness when an admin supplies
+ * an `overridePhone`. Convex has no telephony SDK to validate/format
+ * against here, so this is intentionally conservative: it strips
+ * formatting characters (spaces, dashes, parens, dots) and ensures a
+ * single leading "+", but does not guess a country code for a number that
+ * doesn't already have one. Falls back to the trimmed input unchanged if
+ * it contains no digits at all, rather than returning an empty string.
+ */
+export function normalizePhone(raw: string): string {
+  const trimmed = raw.trim();
+  const digits = trimmed.replace(/[^0-9]/g, "");
+  return digits ? `+${digits}` : trimmed;
 }
 
 export const searchBusinesses = action({
