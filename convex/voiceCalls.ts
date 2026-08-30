@@ -93,8 +93,17 @@ interface CallPrecondition {
  */
 function validateCallPreconditions(
   business: Doc<"businesses">,
+  lead: Doc<"leads">,
   previousAttemptCount: number,
 ): CallPrecondition {
+  if (lead.status === "DISQUALIFIED") {
+    return {
+      ok: false,
+      errorCode: "LEAD_DISQUALIFIED",
+      message: `Lead ${lead._id} is disqualified`,
+      retryable: false,
+    };
+  }
   if (!business.contactEligible) {
     return {
       ok: false,
@@ -231,7 +240,7 @@ export const startCall = internalAction({
     if (!context) {
       throw new Error(`startCall: project ${projectId} not found`);
     }
-    const { project, business, previousAttemptCount } = context;
+    const { project, business, lead, previousAttemptCount } = context;
 
     if (project.state !== "CALL_QUEUED") {
       // Stale/duplicate schedule (e.g. an admin already resolved this a
@@ -243,7 +252,7 @@ export const startCall = internalAction({
       };
     }
 
-    const precondition = validateCallPreconditions(business, previousAttemptCount);
+    const precondition = validateCallPreconditions(business, lead, previousAttemptCount);
     if (!precondition.ok) {
       await ctx.runMutation(internal.voiceCalls.rejectCall, {
         projectId,
@@ -332,11 +341,15 @@ export const loadCallContext = internalQuery({
     if (!business) {
       throw new Error(`loadCallContext: business ${project.businessId} not found for project ${projectId}`);
     }
+    const lead = await ctx.db.get(project.leadId);
+    if (!lead) {
+      throw new Error(`loadCallContext: lead ${project.leadId} not found for project ${projectId}`);
+    }
     const previousAttempts = await ctx.db
       .query("callAttempts")
       .withIndex("by_projectId", (q) => q.eq("projectId", projectId))
       .collect();
-    return { project, business, previousAttemptCount: previousAttempts.length };
+    return { project, business, lead, previousAttemptCount: previousAttempts.length };
   },
 });
 
