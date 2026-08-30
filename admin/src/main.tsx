@@ -13,9 +13,6 @@ root.render(
   <StrictMode>
     <ErrorBoundary>
       {convexUrl ? (
-        // NOTE: Admin authentication is disabled — any user can access the
-        // dashboard (App.tsx does not gate routes behind Authenticated), so
-        // we use the plain ConvexProvider instead of ConvexAuthProvider.
         <ConvexProvider client={new ConvexReactClient(convexUrl)}>
           <BrowserRouter><App /></BrowserRouter>
         </ConvexProvider>

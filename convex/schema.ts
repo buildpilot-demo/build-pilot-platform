@@ -1,6 +1,5 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v, type Validator } from "convex/values";
-import { authTables } from "@convex-dev/auth/server";
 
 import {
   FAILURE_STATES,
@@ -66,9 +65,6 @@ const attemptStatusValidator = v.union(
 );
 
 export default defineSchema({
-  // Convex Auth's own tables (users, authAccounts, authSessions, etc.) — T7.4.
-  ...authTables,
-
   businesses: defineTable({
     source: v.string(),
     externalId: v.string(),

@@ -101,9 +101,9 @@ npx convex run github:configureStarterTemplate
 
 This looks up the starter repo's default branch and latest commit SHA on GitHub and saves it as the active `templateVersions` row. Until this has been run at least once, every repository-preparation attempt (and any Admin "Resume" action that re-enters `REPOSITORY_PREPARING`) will fail with `No active starter template is configured`. Re-run the same command any time you want to re-pin to the starter repo's latest commit.
 
-### Admin authentication (T7.4 — deferred)
+### Admin authentication (T7.4 — removed)
 
-Admin queries/mutations/actions do **not** currently require a signed-in admin — authentication is intentionally disabled for now so the team isn't blocked building/demoing the rest of the pipeline. The Convex Auth scaffolding (`convex/auth.ts`, `convex/lib/auth.ts::requireAdmin`, `convex/lib/bootstrapAdmin.ts`, and the admin app's `LoginPage`) exists but is unused; it can be wired back in (add `requireAdmin(ctx)` calls back to the admin queries/mutations/actions, and re-gate `admin/src/App.tsx` behind `Authenticated`/`Unauthenticated`) in a future pass.
+There is no authentication: the admin console is open to anyone who can reach it, and every Convex query/mutation/action is callable without a signed-in user. The Convex Auth scaffolding (`convex/auth.ts`, `convex/lib/auth.ts`, `convex/lib/bootstrapAdmin.ts`, and the admin app's `LoginPage`) has been deleted along with the `@convex-dev/auth` dependency.
 
 ## 2. Running the admin frontend
 
