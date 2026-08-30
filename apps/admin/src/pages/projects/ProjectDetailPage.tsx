@@ -4,7 +4,7 @@ import { ComingSoon } from '../../components/ComingSoon'
 import { formatTimestamp, formatWorkflowState } from '../../lib/format'
 import { useProjectDetail, type ProjectDetail } from '../../hooks/useProjectDetail'
 import { useRetryExtraction } from '../../hooks/useRetryExtraction'
-import type { Id } from '../../../../../convex/_generated/dataModel'
+import type { Id } from '@convex/_generated/dataModel'
 
 /** Mirrors convex/schema.ts's `requirementsDataValidator` shape. */
 interface RequirementsData {

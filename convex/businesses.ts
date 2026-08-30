@@ -24,7 +24,7 @@
 import { v } from "convex/values";
 import { action, internalMutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
-import type { Id } from "./_generated/dataModel";
+import type { Doc, Id } from "./_generated/dataModel";
 
 const CONTEXTDEV_DEFAULT_BASE_URL = "https://api.context.dev/v1";
 // Exported so convex/projects.ts::selectBusiness falls back to the exact
@@ -202,6 +202,13 @@ export const upsertFromSearchResult = internalMutation({
   },
 });
 
+export interface BusinessWithLeadStatus extends Doc<"businesses"> {
+  /** Status of this business's most recent lead (leads.by_businessId), or null if it's never been selected. */
+  leadStatus: Doc<"leads">["status"] | null;
+  /** Project created alongside that lead, if any -- lets the Admin UI row link straight to /projects/:projectId. */
+  projectId: Id<"projects"> | null;
+}
+
 /** Reactive query backing the Admin UI search-results screen (T2.4). */
 export const listBusinesses = query({
   args: {
@@ -209,7 +216,7 @@ export const listBusinesses = query({
     category: v.optional(v.string()),
     contactEligibleOnly: v.optional(v.boolean()),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<BusinessWithLeadStatus[]> => {
     const city = args.city;
     const category = args.category;
 
@@ -222,11 +229,40 @@ export const listBusinesses = query({
           .collect()
       : await ctx.db.query("businesses").collect();
 
-    return businesses
+    const filtered = businesses
       .filter((business) => (category ? business.category === category : true))
       .filter((business) =>
         args.contactEligibleOnly ? business.contactEligible && !business.doNotContact : true,
       )
       .sort((a, b) => b.updatedAt - a.updatedAt);
+
+    // Join each business to its most recent lead (by_businessId) so the
+    // Admin UI can tell, without a second round-trip, whether a call has
+    // already been placed for it (T2.3 always creates a fresh Lead +
+    // Project per call, so "most recent" is the one to show).
+    return await Promise.all(
+      filtered.map(async (business): Promise<BusinessWithLeadStatus> => {
+        const leads = await ctx.db
+          .query("leads")
+          .withIndex("by_businessId", (q) => q.eq("businessId", business._id))
+          .collect();
+        const latestLead = leads.sort((a, b) => b.createdAt - a.createdAt)[0];
+
+        let projectId: Id<"projects"> | null = null;
+        if (latestLead) {
+          const projects = await ctx.db
+            .query("projects")
+            .withIndex("by_leadId", (q) => q.eq("leadId", latestLead._id))
+            .collect();
+          projectId = projects[0]?._id ?? null;
+        }
+
+        return {
+          ...business,
+          leadStatus: latestLead?.status ?? null,
+          projectId,
+        };
+      }),
+    );
   },
 });

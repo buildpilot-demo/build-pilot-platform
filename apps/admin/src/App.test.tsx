@@ -22,7 +22,7 @@ describe('App routing', () => {
     expect(screen.getByRole('heading', { name: 'Pipeline dashboard' })).toBeInTheDocument()
   })
 
-  it('renders the search placeholder', () => {
+  it('renders the search screen', () => {
     renderAt('/search')
     expect(screen.getByRole('heading', { name: 'Business search' })).toBeInTheDocument()
   })

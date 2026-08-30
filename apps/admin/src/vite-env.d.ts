@@ -2,6 +2,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_CONVEX_URL: string
+  readonly VITE_DEFAULT_CALL_PHONE?: string
 }
 
 interface ImportMeta {
