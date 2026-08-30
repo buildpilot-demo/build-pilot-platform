@@ -51,9 +51,8 @@ jobs:
 
       - name: Ensure Firebase Hosting site exists
         run: |
-          if ! npx --yes firebase-tools@15 hosting:sites:list --project "${{ secrets.FIREBASE_PROJECT_ID }}" --json | grep -q '"buildpilot-admin"'; then
-            npx --yes firebase-tools@15 hosting:sites:create buildpilot-admin --project "${{ secrets.FIREBASE_PROJECT_ID }}"
-          fi
+          npx --yes firebase-tools@15 hosting:sites:create buildpilot-admin --project "${{ secrets.FIREBASE_PROJECT_ID }}" \
+            || echo "Site buildpilot-admin already exists (or create failed non-fatally); continuing"
 
       - name: Deploy to Firebase Hosting
         run: npx --yes firebase-tools@15 deploy --only hosting --project "${{ secrets.FIREBASE_PROJECT_ID }}" --non-interactive
