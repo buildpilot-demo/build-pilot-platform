@@ -146,19 +146,21 @@ async function validateElevenLabsSignature(request: Request, rawBody: string): P
   if (!secret) return false;
   const header = request.headers.get("elevenlabs-signature")?.trim();
   if (!header) return false;
-  const parts = Object.fromEntries(
-    header.split(",").map((part) => {
-      const separator = part.indexOf("=");
-      return separator < 0 ? [part.trim(), ""] : [part.slice(0, separator).trim(), part.slice(separator + 1).trim()];
-    }),
-  );
-  const timestamp = parts.t;
-  const signature = parts.v0;
-  if (!timestamp || !signature || !/^\d+$/.test(timestamp)) return false;
+  const elements = header.split(",").map((part) => part.trim());
+  const timestamp = elements.find((part) => part.startsWith("t="))?.slice("t=".length);
+  // ElevenLabs may include multiple v0= values (e.g. during secret rotation);
+  // any one of them matching is considered valid.
+  const signatures = elements
+    .filter((part) => part.startsWith("v0="))
+    .map((part) => part.slice("v0=".length));
+  if (!timestamp || signatures.length === 0 || !/^\d+$/.test(timestamp)) return false;
   const timestampMs = Number(timestamp) * 1000;
-  if (!Number.isFinite(timestampMs) || Math.abs(Date.now() - timestampMs) > 5 * 60 * 1000) return false;
+  // ElevenLabs documents a 30-minute replay tolerance window; matching that
+  // here (rather than the previous 5 minutes) avoids rejecting legitimate,
+  // slightly delayed deliveries/retries as invalid.
+  if (!Number.isFinite(timestampMs) || Math.abs(Date.now() - timestampMs) > 30 * 60 * 1000) return false;
   const expected = hex(await hmac("SHA-256", secret, `${timestamp}.${rawBody}`));
-  return constantTimeEqual(signature.toLowerCase(), expected);
+  return signatures.some((signature) => constantTimeEqual(signature.toLowerCase(), expected));
 }
 
 function objectValue(value: unknown): Record<string, unknown> | undefined {

@@ -168,6 +168,16 @@ export const startCall = internalActionGeneric({
           });
           if (!request.ok) throw new Error(`ElevenLabs returned HTTP ${request.status}: ${(await request.text()).slice(0, 300)}`);
           const payload = responseRecord(await request.json());
+          // ElevenLabs' twilio/outbound-call endpoint can return HTTP 200 even
+          // when the call could not be placed (e.g. the underlying Twilio
+          // account is a trial account and the destination number isn't
+          // verified) — in that case `success` is false and `conversation_id`
+          // is null, with the real reason in `message`. Surface that message
+          // instead of the generic "no conversation ID" error so failures are
+          // actionable.
+          if (payload.success === false) {
+            throw new Error(pickString(payload, "message") ?? "ElevenLabs failed to place the outbound call");
+          }
           const conversationId = pickString(payload, "conversation_id", "conversationId");
           if (!conversationId) throw new Error("ElevenLabs response did not include a conversation ID");
           await attempt.recordProviderRequest(conversationId);
