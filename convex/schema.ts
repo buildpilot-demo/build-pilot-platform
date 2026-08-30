@@ -837,4 +837,18 @@ export default defineSchema({
   })
     .index("by_siteId", ["siteId"])
     .index("by_projectId", ["projectId"]),
+
+  // ==========================================================================
+  // Added by convex/lib/externalCall.ts (Stage 1 / T1.4 — docs/task-plan.md
+  // Section 3, contract #4 / PRD Section 9 "Demo Resilience — Replay
+  // Fallback"). Added additively; nothing above this point is touched by
+  // that module. `stageAttempts.result` (above) already IS the "last
+  // successful response" cache per (projectId, stage) — this table only
+  // holds the project-level on/off replay flag itself.
+  // ==========================================================================
+  externalCallReplayFlags: defineTable({
+    projectId: v.id("projects"),
+    enabled: v.boolean(),
+    updatedAt: v.number(),
+  }).index("by_projectId", ["projectId"]),
 });
