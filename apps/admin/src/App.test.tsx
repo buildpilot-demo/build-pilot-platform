@@ -27,9 +27,9 @@ describe('App routing', () => {
     expect(screen.getByRole('heading', { name: 'Business search' })).toBeInTheDocument()
   })
 
-  it('renders the project detail placeholder with the route param', () => {
+  it('renders a loading state for the project detail panel while its query resolves', () => {
     renderAt('/projects/abc123')
-    expect(screen.getByRole('heading', { name: 'Project abc123' })).toBeInTheDocument()
+    expect(screen.getByText('Loading project…')).toBeInTheDocument()
   })
 
   it('renders shared nav in the layout', () => {

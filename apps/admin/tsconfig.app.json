@@ -4,7 +4,13 @@
     "target": "es2023",
     "lib": ["ES2023", "DOM"],
     "module": "esnext",
-    "types": ["vite/client"],
+    // "node" is needed only because this app's Convex hooks import
+    // `../../../../convex/_generated/api` (see src/hooks/), and that
+    // type-only import transitively pulls in convex/businesses.ts, which
+    // references the global `process.env`. Purely a type-checking
+    // concern — `import type` is fully erased at build (verbatimModuleSyntax),
+    // so this never adds Node globals to the actual browser bundle.
+    "types": ["vite/client", "node"],
     "allowArbitraryExtensions": true,
     "skipLibCheck": true,
 
