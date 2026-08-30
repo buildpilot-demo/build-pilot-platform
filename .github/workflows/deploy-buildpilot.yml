@@ -12,6 +12,7 @@ on:
     paths:
       - "admin/**"
       - ".github/workflows/deploy-buildpilot.yml"
+  workflow_dispatch: {}
 
 permissions:
   contents: read
