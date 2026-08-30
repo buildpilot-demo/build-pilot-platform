@@ -1,15 +1,15 @@
 import { render, screen } from '@testing-library/react'
 import { ConvexProvider, ConvexReactClient } from 'convex/react'
 import { describe, expect, it } from 'vitest'
-import { HealthCheck } from './HealthCheck'
+import { HealthCheckPage } from './HealthCheckPage'
 
-describe('HealthCheck', () => {
+describe('HealthCheckPage', () => {
   it('renders an OK status and the convex connection state', async () => {
     const client = new ConvexReactClient('https://example-deployment.convex.cloud')
 
     render(
       <ConvexProvider client={client}>
-        <HealthCheck />
+        <HealthCheckPage />
       </ConvexProvider>,
     )
 
